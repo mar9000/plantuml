@@ -1,0 +1,6 @@
+@startsalt
+{#
+  1 | 2
+  a | b
+}
+@endsalt
