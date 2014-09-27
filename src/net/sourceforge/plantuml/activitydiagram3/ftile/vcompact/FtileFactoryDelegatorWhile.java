@@ -56,9 +56,9 @@ public class FtileFactoryDelegatorWhile extends FtileFactoryDelegator {
 		final HtmlColor arrowColor = getRose().getHtmlColor(getSkinParam(), ColorParam.activityArrow);
 
 		final ConditionStyle conditionStyle = getSkinParam().getConditionStyle();
-		final UFont fontArrow = getSkinParam().getFont(FontParam.ACTIVITY_ARROW, null);
+		final UFont fontArrow = getSkinParam().getFont(FontParam.ACTIVITY_ARROW, null, false);
 		final UFont fontTest = getSkinParam().getFont(
-				conditionStyle == ConditionStyle.INSIDE ? FontParam.ACTIVITY_DIAMOND : FontParam.ACTIVITY_ARROW, null);
+				conditionStyle == ConditionStyle.INSIDE ? FontParam.ACTIVITY_DIAMOND : FontParam.ACTIVITY_ARROW, null, false);
 
 		final LinkRendering endInlinkRendering = whileBlock.getOutLinkRendering();
 		final HtmlColor endInlinkColor = endInlinkRendering == null ? arrowColor : endInlinkRendering.getColor();

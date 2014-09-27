@@ -98,7 +98,12 @@ public class QuoteUtils {
 			"Big mistake!",
 			"How many UML designers does it take to change a lightbulb ?",
 			"Do you like movies about gladiators ?",
-			"The spirit of learning is a lasting frontier.");
+			"The spirit of learning is a lasting frontier.",
+			"It is curious for sailors this need for making sentences.",
+			"Hoping for the best, but expecting the worst",
+			"The will to go on when I'm hurt deep inside."
+			);
+	
 
 	private QuoteUtils() {
 	}

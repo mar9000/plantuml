@@ -117,16 +117,16 @@ public class FtileFactoryDelegator implements FtileFactory {
 		return factory.createIf(swimlane, thens, elseBranch);
 	}
 
-	public Ftile createFork(List<Ftile> all) {
-		return factory.createFork(all);
+	public Ftile createFork(Swimlane swimlane, List<Ftile> all) {
+		return factory.createFork(swimlane, all);
 	}
 
 	public Ftile createSplit(List<Ftile> all) {
 		return factory.createSplit(all);
 	}
 
-	public Ftile createGroup(Ftile list, Display name, HtmlColor backColor, HtmlColor titleColor) {
-		return factory.createGroup(list, name, backColor, titleColor);
+	public Ftile createGroup(Ftile list, Display name, HtmlColor backColor, HtmlColor titleColor, Display headerNote) {
+		return factory.createGroup(list, name, backColor, titleColor, headerNote);
 	}
 
 	public StringBounder getStringBounder() {

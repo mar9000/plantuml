@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.sourceforge.plantuml.SkinParam;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.graphic.HtmlColorSetSimple;
 
 public class LanguageDescriptor {
 
@@ -143,7 +143,7 @@ public class LanguageDescriptor {
 		print(ps, "keyword", keyword);
 		print(ps, "preprocessor", preproc);
 		print(ps, "skinparameter", SkinParam.getPossibleValues());
-		print(ps, "color", HtmlColorUtils.names());
+		print(ps, "color", new HtmlColorSetSimple().names());
 		ps.println(";EOF");
 	}
 

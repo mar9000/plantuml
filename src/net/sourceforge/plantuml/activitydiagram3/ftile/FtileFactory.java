@@ -68,10 +68,10 @@ public interface FtileFactory extends ISkinSimple {
 
 	public Ftile createIf(Swimlane swimlane, List<Branch> thens, Branch elseBranch);
 
-	public Ftile createFork(List<Ftile> all);
+	public Ftile createFork(Swimlane swimlane, List<Ftile> all);
 
 	public Ftile createSplit(List<Ftile> all);
 
-	public Ftile createGroup(Ftile list, Display name, HtmlColor backColor, HtmlColor titleColor);
+	public Ftile createGroup(Ftile list, Display name, HtmlColor backColor, HtmlColor titleColor, Display headerNote);
 
 }

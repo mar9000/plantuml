@@ -28,8 +28,6 @@
  */
 package net.sourceforge.plantuml.command;
 
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
 import net.sourceforge.plantuml.UrlBuilder.ModeUrl;
@@ -44,13 +42,15 @@ import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.IGroup;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.utils.StringUtils;
+import net.sourceforge.plantuml.utils.UniqueSequence;
 
 public class CommandPackage extends SingleLineCommand2<AbstractEntityDiagram> {
 
 	public CommandPackage() {
 		super(getRegexConcat());
 	}
-	
+
 	private static RegexConcat getRegexConcat() {
 		return new RegexConcat(new RegexLeaf("^package[%s]+"), //
 				new RegexLeaf("NAME", "([%g][^%g]+[%g]|[^#%s{}]*)"), //
@@ -82,12 +82,13 @@ public class CommandPackage extends SingleLineCommand2<AbstractEntityDiagram> {
 			code = Code.of(arg.get("AS", 0));
 		}
 		final IGroup currentPackage = diagram.getCurrentGroup();
-		final IEntity p = diagram.getOrCreateGroup(code, Display.getWithNewlines(display), null, GroupType.PACKAGE, currentPackage);
+		final IEntity p = diagram.getOrCreateGroup(code, Display.getWithNewlines(display), null, GroupType.PACKAGE,
+				currentPackage);
 		final String stereotype = arg.get("STEREOTYPE", 0);
 		if (stereotype != null) {
 			p.setStereotype(new Stereotype(stereotype));
 		}
-		
+
 		final String urlString = arg.get("URL", 0);
 		if (urlString != null) {
 			final UrlBuilder urlBuilder = new UrlBuilder(diagram.getSkinParam().getValue("topurl"), ModeUrl.STRICT);
@@ -97,7 +98,7 @@ public class CommandPackage extends SingleLineCommand2<AbstractEntityDiagram> {
 
 		final String color = arg.get("COLOR", 0);
 		if (color != null) {
-			p.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(color));
+			p.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(color));
 		}
 		return CommandExecutionResult.ok();
 	}

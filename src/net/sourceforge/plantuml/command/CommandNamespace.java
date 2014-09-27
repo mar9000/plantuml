@@ -56,20 +56,19 @@ public class CommandNamespace extends SingleLineCommand2<AbstractEntityDiagram> 
 				new RegexLeaf("[%s]*\\{$"));
 	}
 
-
 	@Override
 	protected CommandExecutionResult executeArg(AbstractEntityDiagram diagram, RegexResult arg) {
 		final Code code = Code.of(arg.get("NAME", 0));
 		final IGroup currentPackage = diagram.getCurrentGroup();
-		final IEntity p = diagram.getOrCreateGroup(code, Display.getWithNewlines(code), code,
-				GroupType.PACKAGE, currentPackage);
+		final IEntity p = diagram.getOrCreateGroup(code, Display.getWithNewlines(code), code, GroupType.PACKAGE,
+				currentPackage);
 		final String stereotype = arg.get("STEREOTYPE", 0);
 		if (stereotype != null) {
 			p.setStereotype(new Stereotype(stereotype));
 		}
 		final String color = arg.get("COLOR", 0);
 		if (color != null) {
-			p.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(color));
+			p.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(color));
 		}
 		return CommandExecutionResult.ok();
 	}

@@ -30,10 +30,10 @@ package net.sourceforge.plantuml.sequencediagram.command;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class CommandHSpace extends SingleLineCommand<SequenceDiagram> {
 

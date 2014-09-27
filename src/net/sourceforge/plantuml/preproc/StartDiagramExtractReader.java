@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.StartUtils;
+import net.sourceforge.plantuml.utils.StartUtils;
 
 public class StartDiagramExtractReader implements ReadLine {
 

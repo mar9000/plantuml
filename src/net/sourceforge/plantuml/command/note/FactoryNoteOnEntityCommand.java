@@ -30,8 +30,6 @@ package net.sourceforge.plantuml.command.note;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
 import net.sourceforge.plantuml.UrlBuilder.ModeUrl;
@@ -55,6 +53,8 @@ import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.utils.StringUtils;
+import net.sourceforge.plantuml.utils.UniqueSequence;
 
 public final class FactoryNoteOnEntityCommand implements SingleMultiFactoryCommand<AbstractEntityDiagram> {
 
@@ -131,7 +131,7 @@ public final class FactoryNoteOnEntityCommand implements SingleMultiFactoryComma
 		};
 	}
 
-	private CommandExecutionResult executeInternal(RegexResult line0, AbstractEntityDiagram system, Url url,
+	private CommandExecutionResult executeInternal(RegexResult line0, AbstractEntityDiagram diagram, Url url,
 			List<? extends CharSequence> s) {
 
 		final String pos = line0.get("POSITION", 0);
@@ -139,21 +139,21 @@ public final class FactoryNoteOnEntityCommand implements SingleMultiFactoryComma
 		final Code code = Code.of(line0.get("ENTITY", 0));
 		final IEntity cl1;
 		if (code == null) {
-			cl1 = system.getLastEntity();
+			cl1 = diagram.getLastEntity();
 			if (cl1 == null) {
 				return CommandExecutionResult.error("Nothing to note to");
 			}
 		} else {
-			cl1 = system.getOrCreateLeaf(code, null, null);
+			cl1 = diagram.getOrCreateLeaf(code, null, null);
 		}
 
-		final IEntity note = system.createLeaf(UniqueSequence.getCode("GMN"), Display.create(s), LeafType.NOTE, null);
-		note.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(line0.get("COLOR", 0)));
+		final IEntity note = diagram.createLeaf(UniqueSequence.getCode("GMN"), Display.create(s), LeafType.NOTE, null);
+		note.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(line0.get("COLOR", 0)));
 		if (url != null) {
 			note.addUrl(url);
 		}
 
-		final Position position = Position.valueOf(pos.toUpperCase()).withRankdir(system.getSkinParam().getRankdir());
+		final Position position = Position.valueOf(pos.toUpperCase()).withRankdir(diagram.getSkinParam().getRankdir());
 		final Link link;
 
 		final LinkType type = new LinkType(LinkDecor.NONE, LinkDecor.NONE).getDashed();
@@ -170,7 +170,7 @@ public final class FactoryNoteOnEntityCommand implements SingleMultiFactoryComma
 		} else {
 			throw new IllegalArgumentException();
 		}
-		system.addLink(link);
+		diagram.addLink(link);
 		return CommandExecutionResult.ok();
 	}
 

@@ -29,25 +29,13 @@
 package net.sourceforge.plantuml.graphic;
 
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.EmptyImageBuilder;
-import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SpriteContainerEmpty;
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.api.ImageDataSimple;
-import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.eps.EpsStrategy;
-import net.sourceforge.plantuml.png.PngIO;
 import net.sourceforge.plantuml.svek.IEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.ColorMapper;
@@ -58,10 +46,6 @@ import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.eps.UGraphicEps;
-import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
-import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
-import net.sourceforge.plantuml.ugraphic.txt.UGraphicTxt;
 
 public class GraphicStrings implements IEntityImage {
 
@@ -89,7 +73,7 @@ public class GraphicStrings implements IEntityImage {
 					HtmlColorUtils.RED_LIGHT, UAntiAliasing.ANTI_ALIASING_ON);
 		}
 		return new GraphicStrings(strings, new UFont("SansSerif", Font.BOLD, 14),
-				HtmlColorUtils.getColorIfValid("#33FF02"), HtmlColorUtils.BLACK, UAntiAliasing.ANTI_ALIASING_ON);
+				HtmlColorSet.getInstance().getColorIfValid("#33FF02"), HtmlColorUtils.BLACK, UAntiAliasing.ANTI_ALIASING_ON);
 	}
 
 	public GraphicStrings(List<String> strings, UFont font, HtmlColor green, HtmlColor background,
@@ -108,73 +92,73 @@ public class GraphicStrings implements IEntityImage {
 		this.antiAliasing = antiAliasing;
 	}
 
-	public void writeImage(OutputStream os, FileFormatOption fileFormatOption, String debugData) throws IOException {
-		final FileFormat fileFormat = fileFormatOption.getFileFormat();
-		if (fileFormat == FileFormat.PNG) {
-			final BufferedImage im = createImage();
-			PngIO.write(im, os, null, 96, debugData);
-		} else if (fileFormat == FileFormat.SVG) {
-			final UGraphicSvg svg = new UGraphicSvg(colorMapper, StringUtils.getAsHtml(colorMapper
-					.getMappedColor(background)), false, 1.0);
-			drawAndGetSize(svg);
-			svg.createXml(os);
-		} else if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
-			final UGraphicTxt txt = new UGraphicTxt();
-			drawAndGetSize(txt);
-			txt.getCharArea().print(new PrintStream(os));
-		} else if (fileFormat == FileFormat.EPS) {
-			final UGraphicEps ug = new UGraphicEps(colorMapper, EpsStrategy.getDefault2());
-			drawAndGetSize(ug);
-			os.write(ug.getEPSCode().getBytes());
-		} else if (fileFormat == FileFormat.LATEX) {
-		} else {
-			throw new UnsupportedOperationException();
-		}
-	}
+	// public void writeImage(OutputStream os, FileFormatOption fileFormatOption, String debugData) throws IOException {
+	// final FileFormat fileFormat = fileFormatOption.getFileFormat();
+	// if (fileFormat == FileFormat.PNG) {
+	// final BufferedImage im = createImage();
+	// PngIO.write(im, os, null, 96, debugData);
+	// } else if (fileFormat == FileFormat.SVG) {
+	// final UGraphicSvg svg = new UGraphicSvg(colorMapper, StringUtils.getAsHtml(colorMapper
+	// .getMappedColor(background)), false, 1.0);
+	// drawAndGetSize(svg);
+	// svg.createXml(os);
+	// } else if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
+	// final UGraphicTxt txt = new UGraphicTxt();
+	// drawAndGetSize(txt);
+	// txt.getCharArea().print(new PrintStream(os));
+	// } else if (fileFormat == FileFormat.EPS) {
+	// final UGraphicEps ug = new UGraphicEps(colorMapper, EpsStrategy.getDefault2());
+	// drawAndGetSize(ug);
+	// os.write(ug.getEPSCode().getBytes());
+	// } else if (fileFormat == FileFormat.LATEX) {
+	// } else {
+	// throw new UnsupportedOperationException();
+	// }
+	// }
 
-	public ImageData exportDiagram(OutputStream os, FileFormatOption fileFormatOption) throws IOException {
-		return exportDiagram(os, null, fileFormatOption);
-	}
+	// private ImageData exportDiagram(OutputStream os, FileFormatOption fileFormatOption) throws IOException {
+	// return exportDiagram(os, null, fileFormatOption);
+	// }
+	//
+	// private ImageData exportDiagram(OutputStream os, String metadata, FileFormatOption fileFormatOption)
+	// throws IOException {
+	// final FileFormat fileFormat = fileFormatOption.getFileFormat();
+	// if (fileFormat == FileFormat.PNG) {
+	// final BufferedImage im = createImage();
+	// PngIO.write(im, os, fileFormatOption.isWithMetadata() ? metadata : null, 96);
+	// } else if (fileFormat == FileFormat.SVG) {
+	// final UGraphicSvg svg = new UGraphicSvg(colorMapper, StringUtils.getAsHtml(colorMapper
+	// .getMappedColor(background)), false, 1.0);
+	// drawAndGetSize(svg);
+	// svg.createXml(os);
+	// } else if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
+	// final UGraphicTxt txt = new UGraphicTxt();
+	// drawAndGetSize(txt);
+	// txt.getCharArea().print(new PrintStream(os));
+	// } else if (fileFormat == FileFormat.EPS) {
+	// final UGraphicEps ug = new UGraphicEps(colorMapper, EpsStrategy.getDefault2());
+	// drawAndGetSize(ug);
+	// os.write(ug.getEPSCode().getBytes());
+	// } else {
+	// throw new UnsupportedOperationException();
+	// }
+	// return new ImageDataSimple();
+	// }
 
-	public ImageData exportDiagram(OutputStream os, String metadata, FileFormatOption fileFormatOption)
-			throws IOException {
-		final FileFormat fileFormat = fileFormatOption.getFileFormat();
-		if (fileFormat == FileFormat.PNG) {
-			final BufferedImage im = createImage();
-			PngIO.write(im, os, fileFormatOption.isWithMetadata() ? metadata : null, 96);
-		} else if (fileFormat == FileFormat.SVG) {
-			final UGraphicSvg svg = new UGraphicSvg(colorMapper, StringUtils.getAsHtml(colorMapper
-					.getMappedColor(background)), false, 1.0);
-			drawAndGetSize(svg);
-			svg.createXml(os);
-		} else if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
-			final UGraphicTxt txt = new UGraphicTxt();
-			drawAndGetSize(txt);
-			txt.getCharArea().print(new PrintStream(os));
-		} else if (fileFormat == FileFormat.EPS) {
-			final UGraphicEps ug = new UGraphicEps(colorMapper, EpsStrategy.getDefault2());
-			drawAndGetSize(ug);
-			os.write(ug.getEPSCode().getBytes());
-		} else {
-			throw new UnsupportedOperationException();
-		}
-		return new ImageDataSimple();
-	}
-
-	public BufferedImage createImage() {
-		EmptyImageBuilder builder = new EmptyImageBuilder(10, 10, colorMapper.getMappedColor(background));
-		Graphics2D g2d = builder.getGraphics2D();
-
-		final Dimension2D size = drawAndGetSize(new UGraphicG2d(colorMapper, g2d, 1.0));
-		g2d.dispose();
-
-		builder = new EmptyImageBuilder(size.getWidth(), size.getHeight(), colorMapper.getMappedColor(background));
-		final BufferedImage im = builder.getBufferedImage();
-		g2d = builder.getGraphics2D();
-		drawAndGetSize(new UGraphicG2d(colorMapper, g2d, 1.0).apply(antiAliasing));
-		g2d.dispose();
-		return im;
-	}
+	// private BufferedImage createImage() {
+	// EmptyImageBuilder builder = new EmptyImageBuilder(10, 10, colorMapper.getMappedColor(background));
+	// Graphics2D g2d = builder.getGraphics2D();
+	//
+	// final Dimension2D size = drawAndGetSize(new UGraphicG2d(colorMapper, g2d, 1.0));
+	// g2d.dispose();
+	//
+	// builder = new EmptyImageBuilder(size.getWidth(), size.getHeight(), colorMapper.getMappedColor(background));
+	// final BufferedImage im = builder.getBufferedImage();
+	// g2d = builder.getGraphics2D();
+	// drawAndGetSize(new UGraphicG2d(colorMapper, g2d, 1.0).apply(antiAliasing));
+	// g2d.dispose();
+	// return im;
+	// }
 
 	private double minWidth;
 
@@ -182,7 +166,32 @@ public class GraphicStrings implements IEntityImage {
 		this.minWidth = minWidth;
 	}
 
-	private Dimension2D drawAndGetSize(final UGraphic ug) {
+	private int maxLine = 0;
+
+	private TextBlock getTextBlock() {
+		TextBlock result = null;
+		if (maxLine == 0) {
+			result = TextBlockUtils.create(Display.create(strings), new FontConfiguration(font, green, hyperlinkColor),
+					HorizontalAlignment.LEFT, new SpriteContainerEmpty());
+		} else {
+			for (int i = 0; i < strings.size(); i += maxLine) {
+				final int n = Math.min(i + maxLine, strings.size());
+				final TextBlock textBlock1 = TextBlockUtils.create(Display.create(strings.subList(i, n)),
+						new FontConfiguration(font, green, hyperlinkColor), HorizontalAlignment.LEFT,
+						new SpriteContainerEmpty());
+				if (result == null) {
+					result = textBlock1;
+				} else {
+					result = TextBlockUtils.withMargin(result, 0, 10, 0, 0);
+					result = TextBlockUtils.mergeLR(result, textBlock1, VerticalAlignment.TOP);
+				}
+			}
+		}
+		result = DateEventUtils.addEvent(result, green);
+		return result;
+	}
+
+	public void drawU(UGraphic ug) {
 		final Dimension2D size = calculateDimension(ug.getStringBounder());
 		getTextBlock().drawU(ug.apply(new UChangeColor(green)));
 
@@ -197,35 +206,6 @@ public class GraphicStrings implements IEntityImage {
 				ug.apply(new UTranslate(size.getWidth() - image.getWidth() - 1, 1)).draw(new UImage(image));
 			}
 		}
-		return size;
-	}
-
-	private int maxLine = 0;
-
-	private TextBlock getTextBlock() {
-		TextBlock result = null;
-		if (maxLine == 0) {
-			result = TextBlockUtils.create(Display.create(strings), new FontConfiguration(font, green, hyperlinkColor),
-					HorizontalAlignment.LEFT, new SpriteContainerEmpty());
-		} else {
-			for (int i = 0; i < strings.size(); i += maxLine) {
-				final int n = Math.min(i + maxLine, strings.size());
-				final TextBlock textBlock1 = TextBlockUtils.create(Display.create(strings.subList(i, n)),
-						new FontConfiguration(font, green, hyperlinkColor), HorizontalAlignment.LEFT, new SpriteContainerEmpty());
-				if (result == null) {
-					result = textBlock1;
-				} else {
-					result = TextBlockUtils.withMargin(result, 0, 10, 0, 0);
-					result = TextBlockUtils.mergeLR(result, textBlock1, VerticalAlignment.TOP);
-				}
-			}
-		}
-		result = DateEventUtils.addEvent(result, green);
-		return result;
-	}
-
-	public void drawU(UGraphic ug) {
-		drawAndGetSize(ug);
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {

@@ -74,8 +74,9 @@ public class CommandCreateEntityObject extends SingleLineCommand2<ObjectDiagram>
 		}
 		final IEntity entity = diagram.createLeaf(code, Display.getWithNewlines(display), LeafType.OBJECT, null);
 		if (stereotype != null) {
-			entity.setStereotype(new Stereotype(stereotype, diagram.getSkinParam().getCircledCharacterRadius(),
-					diagram.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null)));
+			entity.setStereotype(new Stereotype(stereotype, diagram.getSkinParam().getCircledCharacterRadius(), diagram
+					.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null, false), diagram.getSkinParam()
+					.getIHtmlColorSet()));
 		}
 		final String urlString = arg.get("URL", 0);
 		if (urlString != null) {
@@ -83,7 +84,7 @@ public class CommandCreateEntityObject extends SingleLineCommand2<ObjectDiagram>
 			final Url url = urlBuilder.getUrl(urlString);
 			entity.addUrl(url);
 		}
-		entity.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(arg.get("COLOR", 0)));
+		entity.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("COLOR", 0)));
 		return CommandExecutionResult.ok();
 	}
 

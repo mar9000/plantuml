@@ -44,6 +44,8 @@ import net.sourceforge.plantuml.core.DiagramDescriptionImpl;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.preproc.Defines;
+import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
+import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 
 public class SourceStringReader {
 
@@ -93,8 +95,7 @@ public class SourceStringReader {
 
 	public String generateImage(OutputStream os, int numImage, FileFormatOption fileFormatOption) throws IOException {
 		if (blocks.size() == 0) {
-			final GraphicStrings error = GraphicStrings.createDefault(Arrays.asList("No @startuml found"), fileFormatOption.isUseRedForError());
-			error.writeImage(os, fileFormatOption, null);
+			noStartumlFound(os, fileFormatOption);
 			return null;
 		}
 		for (BlockUml b : blocks) {
@@ -113,6 +114,14 @@ public class SourceStringReader {
 		Log.error("numImage is too big = " + numImage);
 		return null;
 
+	}
+
+	private void noStartumlFound(OutputStream os, FileFormatOption fileFormatOption) throws IOException {
+		final GraphicStrings error = GraphicStrings.createDefault(Arrays.asList("No @startuml found"), fileFormatOption.isUseRedForError());
+		final ImageBuilder imageBuilder = new ImageBuilder(new ColorMapperIdentity(), 1.0, error.getBackcolor(),
+				null, null, 0, 0, null);
+		imageBuilder.addUDrawable(error);
+		imageBuilder.writeImageTOBEMOVED(fileFormatOption.getFileFormat(), os);
 	}
 
 
@@ -138,8 +147,7 @@ public class SourceStringReader {
 	public DiagramDescription generateDiagramDescription(OutputStream os, int numImage, FileFormatOption fileFormatOption)
 			throws IOException {
 		if (blocks.size() == 0) {
-			final GraphicStrings error = GraphicStrings.createDefault(Arrays.asList("No @startuml found"), fileFormatOption.isUseRedForError());
-			error.writeImage(os, fileFormatOption, null);
+			noStartumlFound(os, fileFormatOption);
 			return null;
 		}
 		for (BlockUml b : blocks) {

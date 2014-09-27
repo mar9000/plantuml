@@ -29,7 +29,6 @@
 package net.sourceforge.plantuml.statediagram.command;
 
 import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.classdiagram.command.CommandLinkClass;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
@@ -44,8 +43,8 @@ import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class CommandLinkState extends SingleLineCommand2<StateDiagram> {
 
@@ -83,16 +82,16 @@ public class CommandLinkState extends SingleLineCommand2<StateDiagram> {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(StateDiagram system, RegexResult arg) {
+	protected CommandExecutionResult executeArg(StateDiagram diagram, RegexResult arg) {
 		final String ent1 = arg.get("ENT1", 0);
 		final String ent2 = arg.get("ENT2", 0);
 
-		final IEntity cl1 = getEntityStart(system, ent1);
+		final IEntity cl1 = getEntityStart(diagram, ent1);
 		if (cl1 == null) {
 			return CommandExecutionResult.error("The state " + ent1
 					+ " has been created in a concurrent state : it cannot be used here.");
 		}
-		final IEntity cl2 = getEntityEnd(system, ent2);
+		final IEntity cl2 = getEntityEnd(diagram, ent2);
 		if (cl2 == null) {
 			return CommandExecutionResult.error("The state " + ent2
 					+ " has been created in a concurrent state : it cannot be used here.");
@@ -102,13 +101,13 @@ public class CommandLinkState extends SingleLineCommand2<StateDiagram> {
 			cl1.setStereotype(new Stereotype(arg.get("ENT1", 1)));
 		}
 		if (arg.get("ENT1", 2) != null) {
-			cl1.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(arg.get("ENT1", 2)));
+			cl1.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("ENT1", 2)));
 		}
 		if (arg.get("ENT2", 1) != null) {
 			cl2.setStereotype(new Stereotype(arg.get("ENT2", 1)));
 		}
 		if (arg.get("ENT2", 2) != null) {
-			cl2.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(arg.get("ENT2", 2)));
+			cl2.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("ENT2", 2)));
 		}
 
 		String queue = arg.get("ARROW_BODY1", 0) + arg.get("ARROW_BODY2", 0);
@@ -130,7 +129,7 @@ public class CommandLinkState extends SingleLineCommand2<StateDiagram> {
 			link = link.getInv();
 		}
 		CommandLinkClass.applyStyle(arg.getLazzy("ARROW_STYLE", 0), link);
-		system.addLink(link);
+		diagram.addLink(link);
 
 		return CommandExecutionResult.ok();
 	}

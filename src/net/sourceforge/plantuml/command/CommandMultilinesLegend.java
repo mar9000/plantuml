@@ -30,13 +30,13 @@ package net.sourceforge.plantuml.command;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class CommandMultilinesLegend extends CommandMultilines2<UmlDiagram> {
 
@@ -67,7 +67,7 @@ public class CommandMultilinesLegend extends CommandMultilines2<UmlDiagram> {
 			if (alignment == null) {
 				alignment = HorizontalAlignment.CENTER;
 			}
-			diagram.setLegend(StringUtils.manageEmbededDiagrams(strings), alignment);
+			diagram.setLegend(strings, alignment);
 			return CommandExecutionResult.ok();
 		}
 		return CommandExecutionResult.error("No legend defined");

@@ -33,7 +33,7 @@ import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 
 
 public enum ColorParam {
-	background(HtmlColorUtils.getColorIfValid("white")),
+	background(HtmlColorUtils.WHITE),
 	hyperlink(HtmlColorUtils.BLUE),
 	
 	activityBackground(HtmlColorUtils.MY_YELLOW),
@@ -53,10 +53,10 @@ public enum ColorParam {
 	
 	classBackground(HtmlColorUtils.MY_YELLOW),
 	classBorder(HtmlColorUtils.MY_RED),
-	stereotypeCBackground(HtmlColorUtils.getColorIfValid("#ADD1B2")),
-	stereotypeABackground(HtmlColorUtils.getColorIfValid("#A9DCDF")),
-	stereotypeIBackground(HtmlColorUtils.getColorIfValid("#B4A7E5")),
-	stereotypeEBackground(HtmlColorUtils.getColorIfValid("#EB937F")),
+	stereotypeCBackground(HtmlColorUtils.COL_ADD1B2),
+	stereotypeABackground(HtmlColorUtils.COL_A9DCDF),
+	stereotypeIBackground(HtmlColorUtils.COL_B4A7E5),
+	stereotypeEBackground(HtmlColorUtils.COL_EB937F),
 	classArrow(HtmlColorUtils.MY_RED),
 		
 	packageBackground(HtmlColorUtils.MY_YELLOW),
@@ -77,10 +77,10 @@ public enum ColorParam {
 	stateStart(HtmlColorUtils.BLACK),
 	stateEnd(HtmlColorUtils.BLACK),
 
-	noteBackground(HtmlColorUtils.getColorIfValid("#FBFB77"), true),
+	noteBackground(HtmlColorUtils.COL_FBFB77, true),
 	noteBorder(HtmlColorUtils.MY_RED),
 	
-	legendBackground(HtmlColorUtils.getColorIfValid("#DDDDDD"), true),
+	legendBackground(HtmlColorUtils.COL_DDDDDD, true),
 	legendBorder(HtmlColorUtils.BLACK),
 	
 	actorBackground(HtmlColorUtils.MY_YELLOW, true),
@@ -88,16 +88,16 @@ public enum ColorParam {
 	participantBackground(HtmlColorUtils.MY_YELLOW, true),
 	participantBorder(HtmlColorUtils.MY_RED),
 	sequenceGroupBorder(HtmlColorUtils.BLACK),
-	sequenceGroupBackground(HtmlColorUtils.getColorIfValid("#EEEEEE"), true),
+	sequenceGroupBackground(HtmlColorUtils.COL_EEEEEE, true),
 	sequenceReferenceBorder(HtmlColorUtils.BLACK),
-	sequenceReferenceHeaderBackground(HtmlColorUtils.getColorIfValid("#EEEEEE"), true),
+	sequenceReferenceHeaderBackground(HtmlColorUtils.COL_EEEEEE, true),
 	sequenceReferenceBackground(HtmlColorUtils.WHITE, true),
-	sequenceDividerBackground(HtmlColorUtils.getColorIfValid("#EEEEEE"), true),
+	sequenceDividerBackground(HtmlColorUtils.COL_EEEEEE, true),
 	sequenceLifeLineBackground(HtmlColorUtils.WHITE, true),
 	sequenceLifeLineBorder(HtmlColorUtils.MY_RED),
 	sequenceArrow(HtmlColorUtils.MY_RED),
 	sequenceBoxBorder(HtmlColorUtils.MY_RED),
-	sequenceBoxBackground(HtmlColorUtils.getColorIfValid("#DDDDDD"), true),
+	sequenceBoxBackground(HtmlColorUtils.COL_DDDDDD, true),
 	
 	artifactBackground(HtmlColorUtils.MY_YELLOW),
 	artifactBorder(HtmlColorUtils.MY_RED),
@@ -125,14 +125,14 @@ public enum ColorParam {
 	entityBorder(HtmlColorUtils.MY_RED),
 
 	
-	iconPrivate(HtmlColorUtils.getColorIfValid("#C82930")),
-	iconPrivateBackground(HtmlColorUtils.getColorIfValid("#F24D5C")),
-	iconPackage(HtmlColorUtils.getColorIfValid("#1963A0")),
-	iconPackageBackground(HtmlColorUtils.getColorIfValid("#4177AF")),
-	iconProtected(HtmlColorUtils.getColorIfValid("#B38D22")),
-	iconProtectedBackground(HtmlColorUtils.getColorIfValid("#FFFF44")),
-	iconPublic(HtmlColorUtils.getColorIfValid("#038048")),
-	iconPublicBackground(HtmlColorUtils.getColorIfValid("#84BE84"));
+	iconPrivate(HtmlColorUtils.COL_C82930),
+	iconPrivateBackground(HtmlColorUtils.COL_F24D5C),
+	iconPackage(HtmlColorUtils.COL_1963A0),
+	iconPackageBackground(HtmlColorUtils.COL_4177AF),
+	iconProtected(HtmlColorUtils.COL_B38D22),
+	iconProtectedBackground(HtmlColorUtils.COL_FFFF44),
+	iconPublic(HtmlColorUtils.COL_038048),
+	iconPublicBackground(HtmlColorUtils.COL_84BE84);
 	
 	private final boolean isBackground;
 	private final HtmlColor defaultValue;

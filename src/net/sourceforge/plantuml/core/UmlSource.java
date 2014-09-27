@@ -34,10 +34,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.StartUtils;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.cucadiagram.Display;
+import net.sourceforge.plantuml.utils.StartUtils;
+import net.sourceforge.plantuml.utils.StringUtils;
 import net.sourceforge.plantuml.version.IteratorCounter;
 import net.sourceforge.plantuml.version.IteratorCounterImpl;
 

@@ -85,10 +85,10 @@ public class Rose implements Skin {
 		final HtmlColor sequenceActorBackground = getHtmlColor(param, ColorParam.actorBackground);
 		final HtmlColor sequenceParticipantBackground = getHtmlColor(param, ColorParam.participantBackground);
 
-		final UFont fontArrow = param.getFont(FontParam.SEQUENCE_ARROW, null);
-		final UFont fontGrouping = param.getFont(FontParam.SEQUENCE_GROUP, null);
-		final UFont fontParticipant = param.getFont(FontParam.PARTICIPANT, null);
-		final UFont fontActor = param.getFont(FontParam.ACTOR, null);
+		final UFont fontArrow = param.getFont(FontParam.SEQUENCE_ARROW, null, false);
+		final UFont fontGrouping = param.getFont(FontParam.SEQUENCE_GROUP, null, false);
+		final UFont fontParticipant = param.getFont(FontParam.PARTICIPANT, null, false);
+		final UFont fontActor = param.getFont(FontParam.ACTOR, null, false);
 
 		final double deltaShadow = param.shadowing() ? 4.0 : 0;
 
@@ -195,7 +195,7 @@ public class Rose implements Skin {
 		if (type == ComponentType.NOTE) {
 			final HtmlColor noteBackgroundColor = getHtmlColor(param, ColorParam.noteBackground);
 			final HtmlColor borderColor = getHtmlColor(param, ColorParam.noteBorder);
-			final UFont fontNote = param.getFont(FontParam.NOTE, null);
+			final UFont fontNote = param.getFont(FontParam.NOTE, null, false);
 			return new ComponentRoseNote(noteBackgroundColor, borderColor, getFontColor(param, FontParam.NOTE),
 					hyperlinkColor, fontNote, stringsToDisplay, paddingX, paddingY, param, deltaShadow, getStroke(
 							param, LineParam.noteBorder, 1));
@@ -203,7 +203,7 @@ public class Rose implements Skin {
 		if (type == ComponentType.NOTE_HEXAGONAL) {
 			final HtmlColor noteBackgroundColor = getHtmlColor(param, ColorParam.noteBackground);
 			final HtmlColor borderColor = getHtmlColor(param, ColorParam.noteBorder);
-			final UFont fontNote = param.getFont(FontParam.NOTE, null);
+			final UFont fontNote = param.getFont(FontParam.NOTE, null, false);
 			return new ComponentRoseNoteHexagonal(noteBackgroundColor, borderColor,
 					getFontColor(param, FontParam.NOTE), hyperlinkColor, fontNote, stringsToDisplay, param,
 					deltaShadow, getStroke(param, LineParam.noteBorder, 1));
@@ -211,13 +211,13 @@ public class Rose implements Skin {
 		if (type == ComponentType.NOTE_BOX) {
 			final HtmlColor noteBackgroundColor = getHtmlColor(param, ColorParam.noteBackground);
 			final HtmlColor borderColor = getHtmlColor(param, ColorParam.noteBorder);
-			final UFont fontNote = param.getFont(FontParam.NOTE, null);
+			final UFont fontNote = param.getFont(FontParam.NOTE, null, false);
 			return new ComponentRoseNoteBox(noteBackgroundColor, borderColor, getFontColor(param, FontParam.NOTE),
 					hyperlinkColor, fontNote, stringsToDisplay, param, deltaShadow, getStroke(param,
 							LineParam.noteBorder, 1));
 		}
 		if (type == ComponentType.GROUPING_HEADER) {
-			final UFont fontGroupingHeader = param.getFont(FontParam.SEQUENCE_GROUP_HEADER, null);
+			final UFont fontGroupingHeader = param.getFont(FontParam.SEQUENCE_GROUP_HEADER, null, false);
 			return new ComponentRoseGroupingHeader(getFontColor(param, FontParam.SEQUENCE_GROUP_HEADER),
 					hyperlinkColor, background, groupBackground, groupBorder, fontGroupingHeader, fontGrouping,
 					stringsToDisplay, param, deltaShadow, getStroke(param, LineParam.sequenceGroupBorder, 2));
@@ -252,7 +252,7 @@ public class Rose implements Skin {
 		}
 		if (type == ComponentType.DELAY_TEXT) {
 			return new ComponentRoseDelayText(getFontColor(param, FontParam.SEQUENCE_DELAY), hyperlinkColor,
-					param.getFont(FontParam.SEQUENCE_DELAY, null), stringsToDisplay, param);
+					param.getFont(FontParam.SEQUENCE_DELAY, null, false), stringsToDisplay, param);
 		}
 		if (type == ComponentType.DESTROY) {
 			final HtmlColor borderColor = getHtmlColor(param, ColorParam.sequenceLifeLineBorder);
@@ -263,13 +263,13 @@ public class Rose implements Skin {
 		}
 		if (type == ComponentType.DIVIDER) {
 			return new ComponentRoseDivider(getFontColor(param, FontParam.SEQUENCE_DIVIDER), hyperlinkColor,
-					param.getFont(FontParam.SEQUENCE_DIVIDER, null), sequenceDividerBackground, stringsToDisplay,
+					param.getFont(FontParam.SEQUENCE_DIVIDER, null, false), sequenceDividerBackground, stringsToDisplay,
 					param, deltaShadow > 0, getStroke(param, LineParam.sequenceDividerBorder, 2));
 		}
 		if (type == ComponentType.REFERENCE) {
-			final UFont fontGroupingHeader = param.getFont(FontParam.SEQUENCE_GROUP_HEADER, null);
+			final UFont fontGroupingHeader = param.getFont(FontParam.SEQUENCE_GROUP_HEADER, null, false);
 			return new ComponentRoseReference(getFontColor(param, FontParam.SEQUENCE_REFERENCE), hyperlinkColor,
-					getFontColor(param, FontParam.SEQUENCE_GROUP), param.getFont(FontParam.SEQUENCE_REFERENCE, null),
+					getFontColor(param, FontParam.SEQUENCE_GROUP), param.getFont(FontParam.SEQUENCE_REFERENCE, null, false),
 					sequenceReferenceBorder, sequenceReferenceHeaderBackground, sequenceReferenceBackground,
 					fontGroupingHeader, stringsToDisplay,
 					param.getHorizontalAlignment(AlignParam.SEQUENCE_REFERENCE_ALIGN), param, deltaShadow, getStroke(
@@ -277,7 +277,7 @@ public class Rose implements Skin {
 		}
 		if (type == ComponentType.TITLE) {
 			return new ComponentRoseTitle(getFontColor(param, FontParam.SEQUENCE_TITLE), hyperlinkColor, param.getFont(
-					FontParam.SEQUENCE_TITLE, null), stringsToDisplay, param);
+					FontParam.SEQUENCE_TITLE, null, false), stringsToDisplay, param);
 		}
 		if (type == ComponentType.SIGNATURE) {
 			return new ComponentRoseTitle(HtmlColorUtils.BLACK, hyperlinkColor, fontGrouping, Display.create(
@@ -287,7 +287,7 @@ public class Rose implements Skin {
 			final HtmlColor borderColor = getHtmlColor(param, ColorParam.sequenceBoxBorder);
 			final HtmlColor backColor = getHtmlColor(param, ColorParam.sequenceBoxBackground);
 			return new ComponentRoseEnglober(borderColor, backColor, stringsToDisplay, getFontColor(param,
-					FontParam.SEQUENCE_BOX), hyperlinkColor, param.getFont(FontParam.SEQUENCE_BOX, null), param);
+					FontParam.SEQUENCE_BOX), hyperlinkColor, param.getFont(FontParam.SEQUENCE_BOX, null, false), param);
 		}
 
 		return null;

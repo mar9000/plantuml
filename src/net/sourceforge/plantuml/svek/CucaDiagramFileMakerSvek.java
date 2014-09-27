@@ -30,7 +30,6 @@ package net.sourceforge.plantuml.svek;
 
 import java.awt.Color;
 import java.awt.geom.Dimension2D;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -46,7 +45,6 @@ import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Scale;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.activitydiagram3.ftile.EntityImageLegend;
@@ -77,11 +75,11 @@ import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
 import net.sourceforge.plantuml.ugraphic.tikz.UGraphicTikz;
 import net.sourceforge.plantuml.ugraphic.visio.UGraphicVdx;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 
 	private final CucaDiagram diagram;
-	private final List<BufferedImage> flashcodes;
 
 	static private final StringBounder stringBounder;
 
@@ -90,9 +88,8 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 		stringBounder = StringBounderUtils.asStringBounder(builder.getGraphics2D());
 	}
 
-	public CucaDiagramFileMakerSvek(CucaDiagram diagram, List<BufferedImage> flashcodes) throws IOException {
+	public CucaDiagramFileMakerSvek(CucaDiagram diagram) throws IOException {
 		this.diagram = diagram;
-		this.flashcodes = flashcodes;
 	}
 
 	public ImageData createFile(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
@@ -109,7 +106,7 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 		final DotData dotData = new DotData(diagram.getEntityFactory().getRootGroup(), getOrderedLinks(),
 				diagram.getLeafsvalues(), diagram.getUmlDiagramType(), diagram.getSkinParam(), diagram, diagram,
 				diagram.getColorMapper(), diagram.getEntityFactory(), diagram.isHideEmptyDescriptionForState(),
-				dotMode, diagram.getNamespaceSeparator());
+				dotMode, diagram.getNamespaceSeparator(), diagram.getPragma());
 		final CucaDiagramFileMakerSvek2 svek2 = new CucaDiagramFileMakerSvek2(dotData, diagram.getEntityFactory(),
 				false, diagram.getSource(), diagram.getPragma());
 		return svek2;
@@ -145,11 +142,11 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 		final Dimension2D dim = result.calculateDimension(stringBounder);
 		final double scale = getScale(fileFormatOption, dim);
 
-		final ImageBuilder imageBuilder = new ImageBuilder(fileFormat, diagram.getSkinParam().getColorMapper(), scale,
+		final ImageBuilder imageBuilder = new ImageBuilder(diagram.getSkinParam().getColorMapper(), scale,
 				result.getBackcolor(), fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null,
-				warningOrError, 0, 10);
+				warningOrError, 0, 10, diagram.getAnimation());
 		imageBuilder.addUDrawable(result);
-		return imageBuilder.writeImageTOBEMOVED(os);
+		return imageBuilder.writeImageTOBEMOVED(fileFormat, os);
 
 	}
 
@@ -288,7 +285,7 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 
 	private final UFont getFont(FontParam fontParam) {
 		final ISkinParam skinParam = diagram.getSkinParam();
-		return skinParam.getFont(fontParam, null);
+		return skinParam.getFont(fontParam, null, false);
 	}
 
 	private final HtmlColor getFontColor(FontParam fontParam, Stereotype stereo) {

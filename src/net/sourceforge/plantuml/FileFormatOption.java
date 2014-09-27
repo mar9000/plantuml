@@ -50,6 +50,7 @@ import net.sourceforge.plantuml.ugraphic.html5.UGraphicHtml5;
 import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
 import net.sourceforge.plantuml.ugraphic.tikz.UGraphicTikz;
 import net.sourceforge.plantuml.ugraphic.visio.UGraphicVdx;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 /**
  * A FileFormat with some parameters.

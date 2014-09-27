@@ -31,7 +31,6 @@ package net.sourceforge.plantuml.activitydiagram.command;
 import java.util.List;
 
 import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
 import net.sourceforge.plantuml.UrlBuilder.ModeUrl;
@@ -54,7 +53,7 @@ import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram> {
 
@@ -100,7 +99,8 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 			entity1.setStereotype(new Stereotype(line0.get("STEREOTYPE", 0)));
 		}
 		if (line0.get("BACKCOLOR", 0) != null) {
-			entity1.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(line0.get("BACKCOLOR", 0)));
+			entity1.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet()
+					.getColorIfValid(line0.get("BACKCOLOR", 0)));
 		}
 		final StringBuilder sb = new StringBuilder();
 
@@ -146,8 +146,8 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 			partition = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(partition);
 		}
 		if (partition != null) {
-			diagram.getOrCreateGroup(Code.of(partition), Display.getWithNewlines(partition), null,
-					GroupType.PACKAGE, null);
+			diagram.getOrCreateGroup(Code.of(partition), Display.getWithNewlines(partition), null, GroupType.PACKAGE,
+					null);
 		}
 		final IEntity entity2 = diagram.createLeaf(code, Display.getWithNewlines(display), LeafType.ACTIVITY, null);
 		if (partition != null) {
@@ -161,7 +161,7 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 			entity2.setStereotype(new Stereotype(lineLast.get(2)));
 		}
 		if (lineLast.get(4) != null) {
-			entity2.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(lineLast.get(4)));
+			entity2.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(lineLast.get(4)));
 		}
 
 		if (entity1 == null || entity2 == null) {

@@ -58,7 +58,7 @@ public class CommandIf4 extends SingleLineCommand2<ActivityDiagram3> {
 
 	@Override
 	protected CommandExecutionResult executeArg(ActivityDiagram3 diagram, RegexResult arg) {
-		final HtmlColor color = HtmlColorUtils.getColorIfValid(arg.get("COLOR", 0));
+		final HtmlColor color = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("COLOR", 0));
 
 		String test = arg.get("TEST", 0);
 		if (test.length() == 0) {

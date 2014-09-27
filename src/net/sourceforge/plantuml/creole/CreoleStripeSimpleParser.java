@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
+import net.sourceforge.plantuml.utils.CharHidder;
 
 public class CreoleStripeSimpleParser {
 
@@ -101,10 +102,10 @@ public class CreoleStripeSimpleParser {
 		}
 
 		final Pattern p2 = MyPattern.cmpile("^(#+)(.+)$");
-		final Matcher m2 = p2.matcher(line);
+		final Matcher m2 = p2.matcher(CharHidder.hide(line));
 		if (m2.find()) {
-			this.line = m2.group(2).trim();
-			final int order = m2.group(1).length() - 1;
+			this.line = CharHidder.unhide(m2.group(2)).trim();
+			final int order = CharHidder.unhide(m2.group(1)).length() - 1;
 			this.style = new StripeStyle(StripeStyleType.LIST_WITH_NUMBER, order, '\0');
 			return;
 		}

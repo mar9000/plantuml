@@ -43,17 +43,20 @@ import net.sourceforge.plantuml.ugraphic.URectangle;
 
 public class FtileBlackBlock extends AbstractFtile {
 
-	private final double width;
-	private final double height;
+	private double width;
+	private double height;
 	private final HtmlColor colorBar;
 	private final Swimlane swimlane;
 
-	public FtileBlackBlock(boolean shadowing, double width, double height, HtmlColor colorBar, Swimlane swimlane) {
+	public FtileBlackBlock(boolean shadowing, HtmlColor colorBar, Swimlane swimlane) {
 		super(shadowing);
-		this.height = height;
-		this.width = width;
 		this.colorBar = colorBar;
 		this.swimlane = swimlane;
+	}
+
+	public void setDimenstion(double width, double height) {
+		this.height = height;
+		this.width = width;
 	}
 
 	public FtileGeometry calculateDimension(StringBounder stringBounder) {

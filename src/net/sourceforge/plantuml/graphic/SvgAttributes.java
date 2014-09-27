@@ -34,8 +34,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.regex.MyPattern;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class SvgAttributes {
 

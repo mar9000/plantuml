@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.FontParam;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
@@ -54,6 +53,7 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrObjectDiagram> {
 
@@ -75,15 +75,16 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 
 				new RegexConcat(
 						//
-						new RegexLeaf("ARROW_HEAD1", "([%s]+o|[\\[<*+^]|[<\\[]\\|)?"), //
+						new RegexLeaf("ARROW_HEAD1", "([%s]+o|[#\\[<*+^]|[<\\[]\\|)?"), //
 						new RegexLeaf("ARROW_BODY1", "([-=.]+)"), //
 						new RegexLeaf("ARROW_STYLE1",
 								"(?:\\[((?:#\\w+|dotted|dashed|bold|hidden)(?:,#\\w+|,dotted|,dashed|,bold|,hidden)*)\\])?"),
 						new RegexLeaf("ARROW_DIRECTION", "(left|right|up|down|le?|ri?|up?|do?)?"), //
+						new RegexLeaf("INSIDE", "(?:(0|\\(0\\)|\\(0|0\\))(?=[-=.~]))?"), //
 						new RegexLeaf("ARROW_STYLE2",
 								"(?:\\[((?:#\\w+|dotted|dashed|bold|hidden)(?:,#\\w+|,dotted|,dashed|,bold|,hidden)*)\\])?"),
 						new RegexLeaf("ARROW_BODY2", "([-=.]*)"), //
-						new RegexLeaf("ARROW_HEAD2", "(o[%s]+|[\\]>*+^]|\\|[>\\]])?")), //
+						new RegexLeaf("ARROW_HEAD2", "(o[%s]+|[#\\]>*+^]|\\|[>\\]])?")), //
 
 				new RegexLeaf("[%s]*"), //
 				new RegexLeaf("SECOND_LABEL", "(?:[%g]([^%g]+)[%g])?"),
@@ -99,7 +100,8 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 	}
 
 	private static String getClassIdentifier() {
-		return "(" + getSeparator() + "?[\\p{L}0-9_]+(?:" + getSeparator() + "[\\p{L}0-9_]+)*|[%g][^%g]+[%g])[%s]*(\\<\\<.*\\>\\>)?";
+		return "(" + getSeparator() + "?[\\p{L}0-9_]+(?:" + getSeparator()
+				+ "[\\p{L}0-9_]+)*|[%g][^%g]+[%g])[%s]*(\\<\\<.*\\>\\>)?";
 	}
 
 	private static String getSeparator() {
@@ -153,11 +155,13 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		}
 		if (arg.get("ENT1", 2) != null) {
 			cl1.setStereotype(new Stereotype(arg.get("ENT1", 2), diagram.getSkinParam().getCircledCharacterRadius(),
-					diagram.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null)));
+					diagram.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null, false), diagram.getSkinParam()
+							.getIHtmlColorSet()));
 		}
 		if (arg.get("ENT2", 2) != null) {
 			cl2.setStereotype(new Stereotype(arg.get("ENT2", 2), diagram.getSkinParam().getCircledCharacterRadius(),
-					diagram.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null)));
+					diagram.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null, false), diagram.getSkinParam()
+							.getIHtmlColorSet()));
 		}
 
 		final LinkType linkType = getLinkType(arg);
@@ -363,6 +367,9 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		if ("*".equals(s)) {
 			return LinkDecor.COMPOSITION;
 		}
+		if ("#".equals(s)) {
+			return LinkDecor.SQUARRE;
+		}
 		return LinkDecor.NONE;
 	}
 
@@ -389,6 +396,9 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		if ("*".equals(s)) {
 			return LinkDecor.COMPOSITION;
 		}
+		if ("#".equals(s)) {
+			return LinkDecor.SQUARRE;
+		}
 		return LinkDecor.NONE;
 	}
 
@@ -399,6 +409,16 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		LinkType result = new LinkType(decors2, decors1);
 		if (arg.get("ARROW_BODY1", 0).contains(".") || arg.get("ARROW_BODY2", 0).contains(".")) {
 			result = result.getDashed();
+		}
+		final String middle = arg.get("INSIDE", 0);
+		if ("0".equals(middle)) {
+			result = result.withMiddleCircle();
+		} else if ("0)".equals(middle)) {
+			result = result.withMiddleCircleCircled1();
+		} else if ("(0".equals(middle)) {
+			result = result.withMiddleCircleCircled2();
+		} else if ("(0)".equals(middle)) {
+			result = result.withMiddleCircleCircled();
 		}
 		return result;
 	}

@@ -34,9 +34,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.plantuml.EmbededDiagram;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
 import net.sourceforge.plantuml.UrlBuilder.ModeUrl;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class Display implements Iterable<CharSequence> {
 
@@ -73,7 +75,30 @@ public class Display implements Iterable<CharSequence> {
 	}
 
 	private Display(List<? extends CharSequence> other) {
-		this.display.addAll(other);
+		this.display.addAll(manageEmbededDiagrams2(other));
+	}
+
+	private static List<CharSequence> manageEmbededDiagrams2(final List<? extends CharSequence> strings) {
+		final List<CharSequence> result = new ArrayList<CharSequence>();
+		final Iterator<? extends CharSequence> it = strings.iterator();
+		while (it.hasNext()) {
+			CharSequence s = it.next();
+			if (s != null && s.toString().trim().equals("{{")) {
+				final List<CharSequence> other = new ArrayList<CharSequence>();
+				other.add("@startuml");
+				while (it.hasNext()) {
+					final CharSequence s2 = it.next();
+					if (s2 != null && s2.toString().trim().equals("}}")) {
+						break;
+					}
+					other.add(s2);
+				}
+				other.add("@enduml");
+				s = new EmbededDiagram(Display.create(other));
+			}
+			result.add(s);
+		}
+		return result;
 	}
 
 	public Display underlined() {

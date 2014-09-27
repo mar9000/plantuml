@@ -79,7 +79,6 @@ import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.TextBlockWidth;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.graphic.USymbolInterface;
-import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.svek.image.EntityImageActivity;
 import net.sourceforge.plantuml.svek.image.EntityImageArcCircle;
 import net.sourceforge.plantuml.svek.image.EntityImageAssociation;
@@ -164,12 +163,12 @@ public final class CucaDiagramFileMakerSvek2 {
 					lhead = getCluster2((IEntity) link.getEntity2()).getClusterId();
 				}
 				final ISkinParam skinParam = dotData.getSkinParam();
-				final FontConfiguration labelFont = new FontConfiguration(skinParam.getFont(FontParam.GENERIC_ARROW, null),
-						skinParam.getFontHtmlColor(
-								FontParam.GENERIC_ARROW, null), skinParam.getHyperlinkColor());
+				final FontConfiguration labelFont = new FontConfiguration(skinParam.getFont(FontParam.GENERIC_ARROW,
+						null, false), skinParam.getFontHtmlColor(FontParam.GENERIC_ARROW, null), skinParam.getHyperlinkColor());
 
 				final Line line = new Line(shapeUid1, shapeUid2, link, colorSequence, ltail, lhead, skinParam,
-						stringBounder, labelFont, getBibliotekon(), dotStringFactory.getGraphvizVersion());
+						stringBounder, labelFont, getBibliotekon(), dotStringFactory.getGraphvizVersion(),
+						dotData.getPragma());
 
 				getBibliotekon().addLine(line);
 
@@ -197,7 +196,7 @@ public final class CucaDiagramFileMakerSvek2 {
 
 		final String svg = dotStringFactory.getSvg(trace, dotStrings);
 		if (svg.length() == 0) {
-			return new GraphvizCrash();
+			return new GraphvizCrash(source.getPlainString());
 		}
 		final String graphvizVersion = extractGraphvizVersion(svg);
 		try {
@@ -207,13 +206,7 @@ public final class CucaDiagramFileMakerSvek2 {
 			if (minX > 0 || minY > 0) {
 				throw new IllegalStateException();
 			}
-			final HtmlColor border;
-			if (dotData.getUmlDiagramType() == UmlDiagramType.STATE) {
-				border = getColor(ColorParam.stateBorder, null, dotData.getSkinParam());
-			} else {
-				border = getColor(ColorParam.packageBorder, null, dotData.getSkinParam());
-			}
-			final SvekResult result = new SvekResult(position, dotData, dotStringFactory, border, hasVerticalLine);
+			final SvekResult result = new SvekResult(position, dotData, dotStringFactory, hasVerticalLine);
 			result.moveSvek(6 - minX, -minY);
 			return result;
 		} catch (Exception e) {
@@ -253,18 +246,14 @@ public final class CucaDiagramFileMakerSvek2 {
 		return nb == 1;
 	}
 
-	private static HtmlColor getColor(ColorParam colorParam, Stereotype stereo, ISkinParam skinParam) {
-		return new Rose().getHtmlColor(skinParam, colorParam, stereo);
-	}
-
-	private Cluster getCluster(IEntity g) {
-		for (Cluster cl : getBibliotekon().allCluster()) {
-			if (cl.getGroup() == g) {
-				return cl;
-			}
-		}
-		throw new IllegalArgumentException(g.toString());
-	}
+//	private Cluster getCluster(IEntity g) {
+//		for (Cluster cl : getBibliotekon().allCluster()) {
+//			if (cl.getGroup() == g) {
+//				return cl;
+//			}
+//		}
+//		throw new IllegalArgumentException(g.toString());
+//	}
 
 	private Cluster getCluster2(IEntity entityMutable) {
 		for (Cluster cl : getBibliotekon().allCluster()) {
@@ -336,7 +325,7 @@ public final class CucaDiagramFileMakerSvek2 {
 			}
 
 			return createEntityImageBlock(ent, skinParam, dotData.isHideEmptyDescriptionForState(), dotData,
-					getBibliotekon(), dotStringFactory.getGraphvizVersion());
+					getBibliotekon(), dotStringFactory.getGraphvizVersion(), dotData.getUmlDiagramType());
 		}
 		return ent.getSvekImage();
 	}
@@ -359,7 +348,7 @@ public final class CucaDiagramFileMakerSvek2 {
 
 	public static IEntityImage createEntityImageBlock(ILeaf leaf, ISkinParam skinParam,
 			boolean isHideEmptyDescriptionForState, PortionShower portionShower, Bibliotekon bibliotekon,
-			GraphvizVersion graphvizVersion) {
+			GraphvizVersion graphvizVersion, UmlDiagramType umlDiagramType) {
 		if (leaf.isRemoved()) {
 			throw new IllegalStateException();
 		}
@@ -387,10 +376,18 @@ public final class CucaDiagramFileMakerSvek2 {
 
 		}
 		if (leaf.getEntityType() == LeafType.CIRCLE_START) {
-			return new EntityImageCircleStart(leaf, skinParam);
+			ColorParam param = ColorParam.activityStart;
+			if (umlDiagramType == UmlDiagramType.STATE) {
+				param = ColorParam.stateStart;
+			}
+			return new EntityImageCircleStart(leaf, skinParam, param);
 		}
 		if (leaf.getEntityType() == LeafType.CIRCLE_END) {
-			return new EntityImageCircleEnd(leaf, skinParam);
+			ColorParam param = ColorParam.activityEnd;
+			if (umlDiagramType == UmlDiagramType.STATE) {
+				param = ColorParam.stateEnd;
+			}
+			return new EntityImageCircleEnd(leaf, skinParam, param);
 		}
 		if (leaf.getEntityType() == LeafType.BRANCH || leaf.getEntityType() == LeafType.STATE_CHOICE) {
 			return new EntityImageBranch(leaf, skinParam);
@@ -522,12 +519,10 @@ public final class CucaDiagramFileMakerSvek2 {
 			return TextBlockUtils.empty(0, 0);
 		}
 
-		final FontParam fontParam = g.getGroupType() == GroupType.STATE ? FontParam.STATE : FontParam.PACKAGE;
-		return TextBlockUtils.create(
-				label,
-				new FontConfiguration(dotData.getSkinParam().getFont(
-						fontParam, stereotype2), dotData.getSkinParam().getFontHtmlColor(fontParam, stereotype2), dotData.getSkinParam().getHyperlinkColor()),
-				HorizontalAlignment.CENTER, dotData.getSkinParam());
+		final FontParam fontParam = g.getTitleFontParam();
+		return TextBlockUtils.create(label, new FontConfiguration(dotData.getSkinParam()
+				.getFont(fontParam, stereotype2, true), dotData.getSkinParam().getFontHtmlColor(fontParam, stereotype2),
+				dotData.getSkinParam().getHyperlinkColor()), HorizontalAlignment.CENTER, dotData.getSkinParam());
 	}
 
 	private TextBlock getStereoBlock(IGroup g) {
@@ -546,9 +541,10 @@ public final class CucaDiagramFileMakerSvek2 {
 		final Stereotype stereotype2 = g.getStereotype();
 
 		final FontParam fontParam = FontParam.COMPONENT_STEREOTYPE;
-		return TextBlockUtils.create(Display.create(stereos), new FontConfiguration(dotData.getSkinParam().getFont(fontParam, stereotype2), dotData.getSkinParam()
-				.getFontHtmlColor(fontParam, stereotype2), dotData.getSkinParam()
-						.getHyperlinkColor()), HorizontalAlignment.CENTER, dotData.getSkinParam());
+		return TextBlockUtils.create(Display.create(stereos),
+				new FontConfiguration(dotData.getSkinParam().getFont(fontParam, stereotype2, false), dotData.getSkinParam()
+						.getFontHtmlColor(fontParam, stereotype2), dotData.getSkinParam().getHyperlinkColor()),
+				HorizontalAlignment.CENTER, dotData.getSkinParam());
 	}
 
 }

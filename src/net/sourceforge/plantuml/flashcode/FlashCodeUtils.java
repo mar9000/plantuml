@@ -29,15 +29,9 @@
 package net.sourceforge.plantuml.flashcode;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.List;
 
 public interface FlashCodeUtils {
 
-	public List<BufferedImage> exportFlashcodeSimple(String s) throws IOException;
-
-	public List<BufferedImage> exportFlashcodeCompress(String s) throws IOException;
-
-	public List<BufferedImage> exportSplitCompress(String s) throws IOException;
+	public BufferedImage exportFlashcode(String s);
 
 }

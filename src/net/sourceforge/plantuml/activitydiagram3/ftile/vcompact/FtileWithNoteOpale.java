@@ -90,7 +90,7 @@ public class FtileWithNoteOpale extends AbstractFtile implements Stencil {
 
 		final Rose rose = new Rose();
 		final HtmlColor fontColor = rose.getFontColor(skinParam, FontParam.NOTE);
-		final UFont fontNote = skinParam.getFont(FontParam.NOTE, null);
+		final UFont fontNote = skinParam.getFont(FontParam.NOTE, null, false);
 
 		final HtmlColor noteBackgroundColor = rose.getHtmlColor(skinParam, ColorParam.noteBackground);
 		final HtmlColor borderColor = rose.getHtmlColor(skinParam, ColorParam.noteBorder);

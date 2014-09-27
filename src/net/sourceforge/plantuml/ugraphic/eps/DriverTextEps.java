@@ -52,7 +52,7 @@ import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UText;
-import net.sourceforge.plantuml.ugraphic.g2d.DriverTextG2d;
+import net.sourceforge.plantuml.ugraphic.g2d.DriverTextAsPathG2d;
 
 public class DriverTextEps implements UDriver<EpsGraphics> {
 

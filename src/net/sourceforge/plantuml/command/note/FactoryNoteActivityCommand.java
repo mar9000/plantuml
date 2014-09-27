@@ -30,8 +30,6 @@ package net.sourceforge.plantuml.command.note;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
 import net.sourceforge.plantuml.UrlBuilder.ModeUrl;
@@ -52,6 +50,8 @@ import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.utils.StringUtils;
+import net.sourceforge.plantuml.utils.UniqueSequence;
 
 public final class FactoryNoteActivityCommand implements SingleMultiFactoryCommand<ActivityDiagram> {
 
@@ -119,19 +119,19 @@ public final class FactoryNoteActivityCommand implements SingleMultiFactoryComma
 		};
 	}
 
-	private CommandExecutionResult executeInternal(ActivityDiagram system, RegexResult arg, IEntity note) {
+	private CommandExecutionResult executeInternal(ActivityDiagram diagram, RegexResult arg, IEntity note) {
 
-		note.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(arg.get("COLOR", 0)));
+		note.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("COLOR", 0)));
 
-		IEntity activity = system.getLastEntityConsulted();
+		IEntity activity = diagram.getLastEntityConsulted();
 		if (activity == null) {
-			activity = system.getStart();
+			activity = diagram.getStart();
 		}
 
 		final Link link;
 
 		final Position position = Position.valueOf(arg.get("POSITION", 0).toUpperCase()).withRankdir(
-				system.getSkinParam().getRankdir());
+				diagram.getSkinParam().getRankdir());
 
 		final LinkType type = new LinkType(LinkDecor.NONE, LinkDecor.NONE).getDashed();
 
@@ -146,7 +146,7 @@ public final class FactoryNoteActivityCommand implements SingleMultiFactoryComma
 		} else {
 			throw new IllegalArgumentException();
 		}
-		system.addLink(link);
+		diagram.addLink(link);
 		return CommandExecutionResult.ok();
 	}
 

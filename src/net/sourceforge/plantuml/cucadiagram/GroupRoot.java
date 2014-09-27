@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
 import net.sourceforge.plantuml.graphic.HtmlColor;
@@ -77,7 +78,6 @@ public class GroupRoot implements IGroup {
 
 	public LeafType getEntityType() {
 		throw new UnsupportedOperationException();
-
 	}
 
 	public String getUid() {
@@ -222,7 +222,8 @@ public class GroupRoot implements IGroup {
 	}
 
 	public USymbol getUSymbol() {
-		throw new UnsupportedOperationException();
+		return null;
+		// throw new UnsupportedOperationException();
 	}
 
 	public void setUSymbol(USymbol symbol) {
@@ -262,6 +263,10 @@ public class GroupRoot implements IGroup {
 	}
 
 	public void setHectorLayer(int layer) {
+		throw new UnsupportedOperationException();
+	}
+
+	public FontParam getTitleFontParam() {
 		throw new UnsupportedOperationException();
 	}
 

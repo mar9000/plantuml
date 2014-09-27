@@ -34,7 +34,6 @@ import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
 public class CommandBoxStart extends SingleLineCommand<SequenceDiagram> {
@@ -44,13 +43,13 @@ public class CommandBoxStart extends SingleLineCommand<SequenceDiagram> {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(SequenceDiagram sequenceDiagram, List<String> arg) {
-		if (sequenceDiagram.isBoxPending()) {
+	protected CommandExecutionResult executeArg(SequenceDiagram diagram, List<String> arg) {
+		if (diagram.isBoxPending()) {
 			return CommandExecutionResult.error("Box cannot be nested");
 		}
-		final HtmlColor color = HtmlColorUtils.getColorIfValid(arg.get(1));
+		final HtmlColor color = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get(1));
 		final String title = arg.get(0) == null ? "" : arg.get(0);
-		sequenceDiagram.boxStart(Display.getWithNewlines(title), color);
+		diagram.boxStart(Display.getWithNewlines(title), color);
 		return CommandExecutionResult.ok();
 	}
 

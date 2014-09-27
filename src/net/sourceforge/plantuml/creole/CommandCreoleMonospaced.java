@@ -44,7 +44,6 @@ public class CommandCreoleMonospaced implements Command {
 
 	private CommandCreoleMonospaced(String p) {
 		this.pattern = MyPattern.cmpile(p);
-
 	}
 
 	public int matchingSize(String line) {

@@ -34,6 +34,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.DotSplines;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizLayoutStrategy;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.IHtmlColorSet;
 import net.sourceforge.plantuml.svek.ConditionStyle;
 import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.ugraphic.ColorMapper;
@@ -61,8 +62,8 @@ public class SkinParamDelegator implements ISkinParam {
 		return skinParam.getCircledCharacterRadius();
 	}
 
-	public UFont getFont(FontParam fontParam, Stereotype stereotype) {
-		return skinParam.getFont(fontParam, stereotype);
+	public UFont getFont(FontParam fontParam, Stereotype stereotype, boolean inPackageTitle) {
+		return skinParam.getFont(fontParam, stereotype, false);
 	}
 
 	public HtmlColor getFontHtmlColor(FontParam param, Stereotype stereotype) {
@@ -171,6 +172,10 @@ public class SkinParamDelegator implements ISkinParam {
 	
 	public boolean useOctagonForActivity() {
 		return skinParam.useOctagonForActivity();
+	}
+
+	public IHtmlColorSet getIHtmlColorSet() {
+		return skinParam.getIHtmlColorSet();
 	}
 
 

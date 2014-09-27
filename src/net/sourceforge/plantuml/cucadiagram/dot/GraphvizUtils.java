@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class GraphvizUtils {
 
@@ -190,7 +190,7 @@ public class GraphvizUtils {
 		final Graphviz graphviz2 = GraphvizUtils.create("digraph foo { test; }", "svg");
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final ProcessState state = graphviz2.createFile3(baos);
-		if (state != ProcessState.TERMINATED_OK) {
+		if (state.differs(ProcessState.TERMINATED_OK())) {
 			return "Error: timeout " + state;
 		}
 
@@ -206,11 +206,11 @@ public class GraphvizUtils {
 		return null;
 	}
 
-//	public static OS getOS() {
-//		if (isWindows()) {
-//			return new OSWindows();
-//		}
-//		return new OSLinux();
-//	}
+	// public static OS getOS() {
+	// if (isWindows()) {
+	// return new OSWindows();
+	// }
+	// return new OSLinux();
+	// }
 
 }

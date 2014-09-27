@@ -36,6 +36,7 @@ import net.sourceforge.plantuml.LineParam;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.Component;
@@ -57,14 +58,14 @@ public class BlueModern implements Skin {
 	private final UFont smallFont = new UFont("SansSerif", Font.BOLD, 11);
 
 	private final HtmlColor hyperlinkColor = HtmlColorUtils.BLUE;
-	private final HtmlColor blue1 = HtmlColorUtils.getColorIfValid("#527BC6");
-	private final HtmlColor blue2 = HtmlColorUtils.getColorIfValid("#D1DBEF");
-	private final HtmlColor blue3 = HtmlColorUtils.getColorIfValid("#D7E0F2");
+	private final HtmlColor blue1 = HtmlColorUtils.COL_527BC6;
+	private final HtmlColor blue2 = HtmlColorUtils.COL_D1DBEF;
+	private final HtmlColor blue3 = HtmlColorUtils.COL_D7E0F2;
 
 	private final HtmlColor red = HtmlColorUtils.MY_RED;
 
-	private final HtmlColor lineColor = HtmlColorUtils.getColorIfValid("#989898");
-	private final HtmlColor borderGroupColor = HtmlColorUtils.getColorIfValid("#BBBBBB");
+	private final HtmlColor lineColor = HtmlColorUtils.COL_989898;
+	private final HtmlColor borderGroupColor = HtmlColorUtils.COL_BBBBBB;
 
 	public Component createComponent(ComponentType type, ArrowConfiguration config, ISkinParam param,
 			Display stringsToDisplay) {
@@ -121,7 +122,7 @@ public class BlueModern implements Skin {
 		}
 		if (type == ComponentType.DELAY_TEXT) {
 			return new ComponentBlueModernDelayText(HtmlColorUtils.BLACK, hyperlinkColor, param.getFont(
-					FontParam.SEQUENCE_DELAY, null), stringsToDisplay, param);
+					FontParam.SEQUENCE_DELAY, null, false), stringsToDisplay, param);
 		}
 		if (type == ComponentType.DESTROY) {
 			return new ComponentRoseDestroy(red);
@@ -158,7 +159,7 @@ public class BlueModern implements Skin {
 		}
 		if (type == ComponentType.ENGLOBER) {
 			return new ComponentBlueModernEnglober(blue1, blue3, stringsToDisplay, HtmlColorUtils.BLACK,
-					hyperlinkColor, param.getFont(FontParam.SEQUENCE_BOX, null), param);
+					hyperlinkColor, param.getFont(FontParam.SEQUENCE_BOX, null, false), param);
 		}
 
 		return null;

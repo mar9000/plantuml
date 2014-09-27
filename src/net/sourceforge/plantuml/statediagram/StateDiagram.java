@@ -29,7 +29,6 @@
 package net.sourceforge.plantuml.statediagram;
 
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -39,6 +38,7 @@ import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.IGroup;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.graphic.USymbol;
+import net.sourceforge.plantuml.utils.UniqueSequence;
 
 public class StateDiagram extends AbstractEntityDiagram {
 

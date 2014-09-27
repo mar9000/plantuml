@@ -35,8 +35,8 @@ import java.util.List;
 
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.api.Performance;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 abstract class AbstractGraphviz implements Graphviz {
 
@@ -136,7 +136,7 @@ abstract class AbstractGraphviz implements Graphviz {
 	private String executeCmd(final String cmd[]) {
 		final ProcessRunner p = new ProcessRunner(cmd);
 		final ProcessState state = p.run(null, null);
-		if (state != ProcessState.TERMINATED_OK) {
+		if (state.differs(ProcessState.TERMINATED_OK())) {
 			return "?";
 		}
 		final StringBuilder sb = new StringBuilder();

@@ -28,7 +28,6 @@
  */
 package net.sourceforge.plantuml.sequencediagram.command;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
@@ -42,6 +41,7 @@ import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.ArrowDecoration;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 
@@ -81,20 +81,33 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 		final MessageExoType messageExoType = getMessageExoType(arg2);
 
 		if (messageExoType == MessageExoType.TO_RIGHT || messageExoType == MessageExoType.TO_LEFT) {
-			if (containsCircleExterior(arg2)) {
+			if (containsSymbolExterior(arg2, "o")) {
 				config = config.withDecoration2(ArrowDecoration.CIRCLE);
 			}
-			if (containsCircle(arg2)) {
+			if (containsSymbol(arg2, "o")) {
 				config = config.withDecoration1(ArrowDecoration.CIRCLE);
 			}
 		} else {
-			if (containsCircleExterior(arg2)) {
+			if (containsSymbolExterior(arg2, "o")) {
 				config = config.withDecoration1(ArrowDecoration.CIRCLE);
 			}
-			if (containsCircle(arg2)) {
+			if (containsSymbol(arg2, "o")) {
 				config = config.withDecoration2(ArrowDecoration.CIRCLE);
 			}
 		}
+
+		if (containsSymbolExterior(arg2, "x") || containsSymbol(arg2, "x")) {
+			config = config.withHead2(ArrowHead.CROSSX);
+		}
+//		if (messageExoType.getDirection() == 1) {
+//			if (containsSymbolExterior(arg2, "x") || containsSymbol(arg2, "x")) {
+//				config = config.withHead2(ArrowHead.CROSSX);
+//			}
+//		} else {
+//			if (containsSymbolExterior(arg2, "x") || containsSymbol(arg2, "x")) {
+//				config = config.withHead2(ArrowHead.CROSSX);
+//			}
+//		}
 
 		final String error = sequenceDiagram.addMessage(new MessageExo(p, messageExoType, labels, config,
 				sequenceDiagram.getNextMessageNumber(), isShortArrow(arg2)));
@@ -124,17 +137,17 @@ abstract class CommandExoArrowAny extends SingleLineCommand2<SequenceDiagram> {
 		return false;
 	}
 
-	private boolean containsCircleExterior(RegexResult arg2) {
+	private boolean containsSymbolExterior(RegexResult arg2, String symbol) {
 		final String s = arg2.get("SHORT", 0);
-		if (s != null && s.contains("o")) {
+		if (s != null && s.contains(symbol)) {
 			return true;
 		}
 		return false;
 	}
 
-	private boolean containsCircle(RegexResult arg2) {
+	private boolean containsSymbol(RegexResult arg2, String symbol) {
 		final String s = arg2.get("ARROW_SUPPCIRCLE", 0);
-		if (s != null && s.contains("o")) {
+		if (s != null && s.contains(symbol)) {
 			return true;
 		}
 		return false;

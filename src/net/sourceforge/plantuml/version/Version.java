@@ -28,25 +28,35 @@
  */
 package net.sourceforge.plantuml.version;
 
+import java.util.Date;
+
 public class Version {
 
 	public static int version() {
-		return 8004;
+		return 8008;
 	}
 
 	public static String versionString() {
-		if (beta()) {
-			return "" + (version() + 1) + "beta";
+		if (beta() != 0) {
+			return "" + (version() + 1) + "beta" + beta();
 		}
 		return "" + version();
 	}
 
-	public static boolean beta() {
-		return false;
+	private static int beta() {
+		final int beta = 0;
+		return beta;
 	}
 
-	public static long compileTime() {
-		return 1408811033366L;
+	private static long compileTime() {
+		return 1411666043397L;
+	}
+
+	public static String compileTimeString() {
+		if (beta() != 0) {
+			return versionString();
+		}
+		return new Date(Version.compileTime()).toString();
 	}
 
 }

@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
@@ -47,6 +46,7 @@ import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public final class CucaDiagramHtmlMaker {
 

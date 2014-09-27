@@ -30,7 +30,6 @@ package net.sourceforge.plantuml.command.note.sequence;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
@@ -46,6 +45,7 @@ import net.sourceforge.plantuml.sequencediagram.Note;
 import net.sourceforge.plantuml.sequencediagram.NoteStyle;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiFactoryCommand<SequenceDiagram> {
 
@@ -88,7 +88,8 @@ public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiF
 	}
 
 	public Command<SequenceDiagram> createMultiLine() {
-		return new CommandMultilines2<SequenceDiagram>(getRegexConcatMultiLine(), MultilinesStrategy.KEEP_STARTING_QUOTE) {
+		return new CommandMultilines2<SequenceDiagram>(getRegexConcatMultiLine(),
+				MultilinesStrategy.KEEP_STARTING_QUOTE) {
 
 			@Override
 			public String getPatternEnd() {
@@ -105,19 +106,19 @@ public final class FactorySequenceNoteOverSeveralCommand implements SingleMultiF
 		};
 	}
 
-	private CommandExecutionResult executeInternal(SequenceDiagram system, final RegexResult line0,
+	private CommandExecutionResult executeInternal(SequenceDiagram diagram, final RegexResult line0,
 			final List<String> strings) {
-		final Participant p1 = system.getOrCreateParticipant(StringUtils
+		final Participant p1 = diagram.getOrCreateParticipant(StringUtils
 				.eventuallyRemoveStartingAndEndingDoubleQuote(line0.get("P1", 0)));
-		final Participant p2 = system.getOrCreateParticipant(StringUtils
+		final Participant p2 = diagram.getOrCreateParticipant(StringUtils
 				.eventuallyRemoveStartingAndEndingDoubleQuote(line0.get("P2", 0)));
 
 		if (strings.size() > 0) {
 			final boolean tryMerge = line0.get("VMERGE", 0) != null;
 			final Note note = new Note(p1, p2, Display.create(strings));
-			note.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(line0.get("COLOR", 0)));
+			note.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(line0.get("COLOR", 0)));
 			note.setStyle(NoteStyle.getNoteStyle(line0.get("STYLE", 0)));
-			system.addNote(note, tryMerge);
+			diagram.addNote(note, tryMerge);
 		}
 		return CommandExecutionResult.ok();
 	}

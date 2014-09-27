@@ -36,12 +36,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.Hideable;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.graphic.IHtmlColorSet;
 import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.ugraphic.UFont;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class Stereotype implements CharSequence, Hideable {
 	private final static Pattern circleChar = MyPattern
@@ -57,11 +58,11 @@ public class Stereotype implements CharSequence, Hideable {
 	private final UFont circledFont;
 	private final boolean automaticPackageStyle;
 
-	public Stereotype(String label, double radius, UFont circledFont) {
-		this(label, radius, circledFont, true);
+	public Stereotype(String label, double radius, UFont circledFont, IHtmlColorSet htmlColorSet) {
+		this(label, radius, circledFont, true, htmlColorSet);
 	}
 
-	public Stereotype(String label, double radius, UFont circledFont, boolean automaticPackageStyle) {
+	public Stereotype(String label, double radius, UFont circledFont, boolean automaticPackageStyle, IHtmlColorSet htmlColorSet) {
 		if (label == null) {
 			throw new IllegalArgumentException();
 		}
@@ -80,7 +81,7 @@ public class Stereotype implements CharSequence, Hideable {
 				this.label = null;
 			}
 			final String colName = mCircleSprite.group(2);
-			final HtmlColor col = HtmlColorUtils.getColorIfValid(colName);
+			final HtmlColor col = htmlColorSet.getColorIfValid(colName);
 			this.htmlColor = col == null ? HtmlColorUtils.BLACK : col;
 			this.sprite = mCircleSprite.group(1);
 			this.character = '\0';
@@ -91,7 +92,7 @@ public class Stereotype implements CharSequence, Hideable {
 				this.label = null;
 			}
 			final String colName = mCircleChar.group(2);
-			this.htmlColor = HtmlColorUtils.getColorIfValid(colName);
+			this.htmlColor = htmlColorSet.getColorIfValid(colName);
 			this.character = mCircleChar.group(1).charAt(0);
 			this.sprite = null;
 		} else {

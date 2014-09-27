@@ -34,7 +34,7 @@ import java.util.Collection;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UFont;
@@ -73,7 +73,7 @@ public class ElementMenuPopup extends AbstractElement {
 		if (zIndex != 1) {
 			return;
 		}
-		ug.apply(new UChangeBackColor(HtmlColorUtils.getColorIfValid("#DDDDDD"))).draw(
+		ug.apply(new UChangeBackColor(HtmlColorSet.getInstance().getColorIfValid("#DDDDDD"))).draw(
 				new URectangle(dimToUse.getWidth(), dimToUse.getHeight()));
 
 		double y1 = 0;

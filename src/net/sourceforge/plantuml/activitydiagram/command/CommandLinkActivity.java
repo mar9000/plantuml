@@ -29,7 +29,6 @@
 package net.sourceforge.plantuml.activitydiagram.command;
 
 import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
 import net.sourceforge.plantuml.UrlBuilder.ModeUrl;
@@ -52,6 +51,7 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 
@@ -103,7 +103,7 @@ public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 			entity1.setStereotype(new Stereotype(arg.get("STEREOTYPE", 0)));
 		}
 		if (arg.get("BACKCOLOR", 0) != null) {
-			entity1.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(arg.get("BACKCOLOR", 0)));
+			entity1.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("BACKCOLOR", 0)));
 		}
 
 		final IEntity entity2 = getEntity(diagram, arg, false);
@@ -111,7 +111,7 @@ public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 			return CommandExecutionResult.error("No such activity");
 		}
 		if (arg.get("BACKCOLOR2", 0) != null) {
-			entity2.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(arg.get("BACKCOLOR2", 0)));
+			entity2.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("BACKCOLOR2", 0)));
 		}
 		if (arg.get("STEREOTYPE2", 0) != null) {
 			entity2.setStereotype(new Stereotype(arg.get("STEREOTYPE2", 0)));

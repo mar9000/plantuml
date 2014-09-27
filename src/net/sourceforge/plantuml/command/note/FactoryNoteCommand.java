@@ -30,7 +30,6 @@ package net.sourceforge.plantuml.command.note;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
@@ -44,7 +43,9 @@ import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
+import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public final class FactoryNoteCommand implements SingleMultiFactoryCommand<AbstractEntityDiagram> {
 
@@ -80,7 +81,8 @@ public final class FactoryNoteCommand implements SingleMultiFactoryCommand<Abstr
 	}
 
 	public Command<AbstractEntityDiagram> createMultiLine() {
-		return new CommandMultilines2<AbstractEntityDiagram>(getRegexConcatMultiLine(), MultilinesStrategy.KEEP_STARTING_QUOTE) {
+		return new CommandMultilines2<AbstractEntityDiagram>(getRegexConcatMultiLine(),
+				MultilinesStrategy.KEEP_STARTING_QUOTE) {
 
 			@Override
 			public String getPatternEnd() {
@@ -88,7 +90,7 @@ public final class FactoryNoteCommand implements SingleMultiFactoryCommand<Abstr
 			}
 
 			public CommandExecutionResult executeNow(final AbstractEntityDiagram system, List<String> lines) {
-				//StringUtils.trim(lines, false);
+				// StringUtils.trim(lines, false);
 				final RegexResult line0 = getStartingPattern().matcher(lines.get(0).trim());
 
 				final List<String> strings = StringUtils.removeEmptyColumns(lines.subList(1, lines.size() - 1));
@@ -98,12 +100,12 @@ public final class FactoryNoteCommand implements SingleMultiFactoryCommand<Abstr
 		};
 	}
 
-	private CommandExecutionResult executeInternal(AbstractEntityDiagram system, RegexResult arg,
+	private CommandExecutionResult executeInternal(AbstractEntityDiagram diagram, RegexResult arg,
 			final List<? extends CharSequence> display) {
 		final Code code = Code.of(arg.get("CODE", 0));
-		final IEntity entity = system.createLeaf(code, Display.create(display), LeafType.NOTE, null);
+		final IEntity entity = diagram.createLeaf(code, Display.create(display), LeafType.NOTE, null);
 		assert entity != null;
-		entity.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(arg.get("COLOR", 0)));
+		entity.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("COLOR", 0)));
 		return CommandExecutionResult.ok();
 	}
 

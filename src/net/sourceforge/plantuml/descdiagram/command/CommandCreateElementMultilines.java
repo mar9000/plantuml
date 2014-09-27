@@ -31,7 +31,6 @@ package net.sourceforge.plantuml.descdiagram.command;
 import java.util.List;
 
 import net.sourceforge.plantuml.FontParam;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.MultilinesStrategy;
@@ -47,6 +46,7 @@ import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.descdiagram.DescriptionDiagram;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.USymbol;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class CommandCreateElementMultilines extends CommandMultilines2<DescriptionDiagram> {
 
@@ -75,7 +75,7 @@ public class CommandCreateElementMultilines extends CommandMultilines2<Descripti
 				new RegexLeaf("DESC", "as[%s]*[%g](.*)$"));
 	}
 
-	public CommandExecutionResult executeNow(DescriptionDiagram system, List<String> lines) {
+	public CommandExecutionResult executeNow(DescriptionDiagram diagram, List<String> lines) {
 		StringUtils.trim(lines, false);
 		final RegexResult line0 = getStartingPattern().matcher(lines.get(0).trim());
 		final String symbol = line0.get("TYPE", 0).toUpperCase();
@@ -107,14 +107,15 @@ public class CommandCreateElementMultilines extends CommandMultilines2<Descripti
 
 		final String stereotype = line0.get("STEREO", 0);
 
-		final ILeaf result = system.createLeaf(code, display, type, usymbol);
+		final ILeaf result = diagram.createLeaf(code, display, type, usymbol);
 		result.setUSymbol(usymbol);
 		if (stereotype != null) {
-			result.setStereotype(new Stereotype(stereotype, system.getSkinParam().getCircledCharacterRadius(), system
-					.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null)));
+			result.setStereotype(new Stereotype(stereotype, diagram.getSkinParam().getCircledCharacterRadius(), diagram
+					.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null, false), diagram.getSkinParam()
+					.getIHtmlColorSet()));
 		}
 
-		result.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(line0.get("COLOR", 0)));
+		result.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(line0.get("COLOR", 0)));
 
 		return CommandExecutionResult.ok();
 	}

@@ -37,7 +37,6 @@ import java.util.StringTokenizer;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -46,6 +45,8 @@ import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.utils.CharHidder;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class AtomText implements Atom {
 
@@ -111,7 +112,8 @@ public class AtomText implements Atom {
 	private AtomText(String text, FontConfiguration style, Url url, DelayedDouble marginLeft, DelayedDouble marginRight) {
 		this.marginLeft = marginLeft;
 		this.marginRight = marginRight;
-		this.text = StringUtils.showComparatorCharacters(StringUtils.manageBackslash(text));
+		//this.text = StringUtils.showComparatorCharacters(StringUtils.manageBackslash(text));
+		this.text = StringUtils.showComparatorCharacters(CharHidder.unhide(text));
 		this.fontConfiguration = style;
 		this.url = url;
 	}

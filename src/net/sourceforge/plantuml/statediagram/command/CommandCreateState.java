@@ -81,7 +81,7 @@ public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(StateDiagram system, RegexResult arg) {
+	protected CommandExecutionResult executeArg(StateDiagram diagram, RegexResult arg) {
 		final Code code = Code.of(arg.getLazzy("CODE", 0));
 		String display = arg.getLazzy("DISPLAY", 0);
 		if (display == null) {
@@ -89,11 +89,11 @@ public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 		}
 		final String stereotype = arg.get("STEREOTYPE", 0);
 		final LeafType type = getTypeFromStereotype(stereotype);
-		if (system.checkConcurrentStateOk(code) == false) {
+		if (diagram.checkConcurrentStateOk(code) == false) {
 			return CommandExecutionResult.error("The state " + code.getFullName()
 					+ " has been created in a concurrent state : it cannot be used here.");
 		}
-		final IEntity ent = system.getOrCreateLeaf(code, type, null);
+		final IEntity ent = diagram.getOrCreateLeaf(code, type, null);
 		ent.setDisplay(Display.getWithNewlines(display));
 
 		if (stereotype != null) {
@@ -101,12 +101,12 @@ public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 		}
 		final String urlString = arg.get("URL", 0);
 		if (urlString != null) {
-			final UrlBuilder urlBuilder = new UrlBuilder(system.getSkinParam().getValue("topurl"), ModeUrl.STRICT);
+			final UrlBuilder urlBuilder = new UrlBuilder(diagram.getSkinParam().getValue("topurl"), ModeUrl.STRICT);
 			final Url url = urlBuilder.getUrl(urlString);
 			ent.addUrl(url);
 		}
-		ent.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(arg.get("COLOR", 0)));
-		ent.setSpecificLineColor(HtmlColorUtils.getColorIfValid(arg.get("LINECOLOR", 1)));
+		ent.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("COLOR", 0)));
+		ent.setSpecificLineColor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("LINECOLOR", 1)));
 		CommandCreateClassMultilines.applyStroke(ent, arg.get("LINECOLOR", 0));
 
 		final String addFields = arg.get("ADDFIELD", 0);
