@@ -41,6 +41,7 @@ import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.preproc.Preprocessor;
 import net.sourceforge.plantuml.preproc.ReadLineReader;
 import net.sourceforge.plantuml.preproc.UncommentReadLine;
+import net.sourceforge.plantuml.utils.StartUtils;
 
 final public class BlockUmlBuilder {
 

@@ -39,7 +39,7 @@ import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.sequencediagram.LifeEventType;
 import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.Participant;
@@ -124,7 +124,7 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(SequenceDiagram system, RegexResult arg) {
+	protected CommandExecutionResult executeArg(SequenceDiagram diagram, RegexResult arg) {
 
 		Participant p1;
 		Participant p2;
@@ -138,13 +138,13 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 		final boolean hasDressing2 = contains(dressing2, ">", "\\", "/", "x");
 		final boolean hasDressing1 = contains(dressing1, "x", "<", "\\", "/");
 		if (hasDressing2) {
-			p1 = getOrCreateParticipant(system, arg, "PART1");
-			p2 = getOrCreateParticipant(system, arg, "PART2");
+			p1 = getOrCreateParticipant(diagram, arg, "PART1");
+			p2 = getOrCreateParticipant(diagram, arg, "PART2");
 			circleAtStart = dressing1.contains("o");
 			circleAtEnd = dressing2.contains("o");
 		} else if (hasDressing1) {
-			p2 = getOrCreateParticipant(system, arg, "PART1");
-			p1 = getOrCreateParticipant(system, arg, "PART2");
+			p2 = getOrCreateParticipant(diagram, arg, "PART1");
+			p1 = getOrCreateParticipant(diagram, arg, "PART2");
 			circleAtStart = dressing2.contains("o");
 			circleAtEnd = dressing1.contains("o");
 		} else {
@@ -196,36 +196,36 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 		final String activationSpec = arg.get("ACTIVATION", 0);
 
 		if (activationSpec != null && activationSpec.charAt(0) == '*') {
-			system.activate(p2, LifeEventType.CREATE, null);
+			diagram.activate(p2, LifeEventType.CREATE, null);
 		}
 
-		final String error = system.addMessage(new Message(p1, p2, labels, config, system.getNextMessageNumber()));
+		final String error = diagram.addMessage(new Message(p1, p2, labels, config, diagram.getNextMessageNumber()));
 		if (error != null) {
 			return CommandExecutionResult.error(error);
 		}
 
-		final HtmlColor activationColor = HtmlColorUtils.getColorIfValid(arg.get("LIFECOLOR", 0));
+		final HtmlColor activationColor = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("LIFECOLOR", 0));
 
 		if (activationSpec != null) {
 			switch (activationSpec.charAt(0)) {
 			case '+':
-				system.activate(p2, LifeEventType.ACTIVATE, activationColor);
+				diagram.activate(p2, LifeEventType.ACTIVATE, activationColor);
 				break;
 			case '-':
-				system.activate(p1, LifeEventType.DEACTIVATE, null);
+				diagram.activate(p1, LifeEventType.DEACTIVATE, null);
 				break;
 			case '!':
-				system.activate(p2, LifeEventType.DESTROY, null);
+				diagram.activate(p2, LifeEventType.DESTROY, null);
 				break;
 			default:
 				break;
 			}
-		} else if (system.isAutoactivate()
+		} else if (diagram.isAutoactivate()
 				&& (config.getHead() == ArrowHead.NORMAL || config.getHead() == ArrowHead.ASYNC)) {
 			if (config.isDotted()) {
-				system.activate(p1, LifeEventType.DEACTIVATE, null);
+				diagram.activate(p1, LifeEventType.DEACTIVATE, null);
 			} else {
-				system.activate(p2, LifeEventType.ACTIVATE, activationColor);
+				diagram.activate(p2, LifeEventType.ACTIVATE, activationColor);
 			}
 
 		}
@@ -260,7 +260,7 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 			} else if (s.equalsIgnoreCase("hidden")) {
 				// link.goHidden();
 			} else {
-				config = config.withColor(HtmlColorUtils.getColorIfValid(s));
+				config = config.withColor(HtmlColorSet.getInstance().getColorIfValid(s));
 			}
 		}
 		return config;

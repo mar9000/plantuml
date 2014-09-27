@@ -112,8 +112,8 @@ public enum FontStyle {
 			return null;
 		}
 		final String color = m.group(1);
-		if (HtmlColorUtils.getColorIfValid(color) != null) {
-			return HtmlColorUtils.getColorIfValid(color);
+		if (HtmlColorSet.getInstance().getColorIfValid(color) != null) {
+			return HtmlColorSet.getInstance().getColorIfValid(color);
 		}
 		return null;
 	}

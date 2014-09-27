@@ -45,6 +45,7 @@ public class InstructionGroup implements Instruction {
 	private final HtmlColor titleColor;
 
 	private final Display test;
+	private Display headerNote;
 
 	public InstructionGroup(Instruction parent, Display test, HtmlColor backColor, HtmlColor titleColor) {
 		this.parent = parent;
@@ -58,7 +59,7 @@ public class InstructionGroup implements Instruction {
 	}
 
 	public Ftile createFtile(FtileFactory factory) {
-		return factory.createGroup(list.createFtile(factory), test, backColor, titleColor);
+		return factory.createGroup(list.createFtile(factory), test, backColor, titleColor, headerNote);
 	}
 
 	public Instruction getParent() {
@@ -74,6 +75,10 @@ public class InstructionGroup implements Instruction {
 	}
 
 	public void addNote(Display note, NotePosition position) {
+		if (list.isEmpty()) {
+			this.headerNote = note;
+			return;
+		}
 		list.addNote(note, position);
 	}
 

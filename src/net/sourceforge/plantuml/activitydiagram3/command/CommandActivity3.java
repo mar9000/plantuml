@@ -71,7 +71,7 @@ public class CommandActivity3 extends SingleLineCommand2<ActivityDiagram3> {
 			url = urlBuilder.getUrl(arg.get("URL", 0));
 		}
 
-		final HtmlColor color = HtmlColorUtils.getColorIfValid(arg.get("COLOR", 0));
+		final HtmlColor color = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("COLOR", 0));
 		final BoxStyle style = BoxStyle.fromChar(arg.get("STYLE", 0).charAt(0));
 		diagram.addActivity(Display.getWithNewlines(arg.get("LABEL", 0)), color, style, url);
 		return CommandExecutionResult.ok();

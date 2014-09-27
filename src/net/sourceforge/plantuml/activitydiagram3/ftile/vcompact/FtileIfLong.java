@@ -256,7 +256,11 @@ class FtileIfLong extends AbstractFtile {
 		public void drawU(UGraphic ug) {
 			final StringBounder stringBounder = ug.getStringBounder();
 			final UTranslate tr1 = getTranslate2(stringBounder);
-			final Point2D p1 = tr1.getTranslated(getFtile1().calculateDimension(stringBounder).getPointOut());
+			final FtileGeometry dim = getFtile1().calculateDimension(stringBounder);
+			if (dim.hasPointOut() == false) {
+				return;
+			}
+			final Point2D p1 = tr1.getTranslated(dim.getPointOut());
 			final double totalHeight = calculateDimensionInternal(stringBounder).getHeight();
 			final Point2D p2 = new Point2D.Double(p1.getX(), totalHeight);
 
@@ -350,16 +354,16 @@ class FtileIfLong extends AbstractFtile {
 
 			final List<Ftile> all = new ArrayList<Ftile>(tiles);
 			all.add(tile2);
-			double minX = Double.MAX_VALUE;
-			double maxX = 0;
+			double minX = totalDim.getWidth() / 2;
+			double maxX = totalDim.getWidth() / 2;
 			for (Ftile tmp : all) {
 				if (tmp.calculateDimension(stringBounder).hasPointOut() == false) {
 					continue;
 				}
 				final UTranslate ut = getTranslateFor(tmp, stringBounder);
-				final double middle = tmp.calculateDimension(stringBounder).translate(ut).getLeft();
-				minX = Math.min(minX, middle);
-				maxX = Math.max(maxX, middle);
+				final double out = tmp.calculateDimension(stringBounder).translate(ut).getLeft();
+				minX = Math.min(minX, out);
+				maxX = Math.max(maxX, out);
 			}
 
 			final Snake s = new Snake(arrowColor);

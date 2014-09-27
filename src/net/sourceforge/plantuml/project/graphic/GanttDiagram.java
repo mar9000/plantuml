@@ -33,6 +33,7 @@ import java.util.SortedMap;
 
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorSetSimple;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.project.Instant;
@@ -104,7 +105,7 @@ public class GanttDiagram {
 
 	}
 
-	private final HtmlColor lightGray = HtmlColorUtils.getColorIfValid("#C8C8C8");
+	private final HtmlColor lightGray = new HtmlColorSetSimple().getColorIfValid("#C8C8C8");
 
 	private void drawGrid(UGraphic ug, double x, double y, SortedMap<Instant, Double> pos) {
 		final ULine line = new ULine(0, itemHeader.getHeight(ug.getStringBounder()));

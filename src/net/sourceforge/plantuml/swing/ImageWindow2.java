@@ -41,6 +41,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -56,8 +58,11 @@ import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.WindowConstants;
 
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.GeneratedImage;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
+import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
+import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.version.PSystemVersion;
 
 class ImageWindow2 extends JFrame {
@@ -199,7 +204,17 @@ class ImageWindow2 extends JFrame {
 		} catch (IOException ex) {
 			final String msg = "Error reading file: " + ex.toString();
 			final GraphicStrings error = GraphicStrings.createDefault(Arrays.asList(msg), false);
-			image = error.createImage();
+			final ImageBuilder imageBuilder = new ImageBuilder(new ColorMapperIdentity(), 1.0, error.getBackcolor(),
+					null, null, 0, 0, null);
+			imageBuilder.addUDrawable(error);
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			try {
+				imageBuilder.writeImageTOBEMOVED(FileFormat.PNG, baos);
+				baos.close();
+				image = ImageIO.read(new ByteArrayInputStream(baos.toByteArray()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		final ImageIcon imageIcon = new ImageIcon(image, simpleLine2.toString());
 		final ScrollablePicture scrollablePicture = new ScrollablePicture(imageIcon, 1);

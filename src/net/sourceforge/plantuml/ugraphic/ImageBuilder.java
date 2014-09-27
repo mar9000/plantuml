@@ -30,18 +30,29 @@ package net.sourceforge.plantuml.ugraphic;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
+import net.sourceforge.plantuml.AnimatedGifEncoder;
 import net.sourceforge.plantuml.CMapData;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.FileUtils;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.anim.AffineTransformation;
+import net.sourceforge.plantuml.anim.Animation;
 import net.sourceforge.plantuml.api.ImageDataComplex;
 import net.sourceforge.plantuml.api.ImageDataSimple;
 import net.sourceforge.plantuml.core.ImageData;
@@ -52,16 +63,17 @@ import net.sourceforge.plantuml.graphic.HtmlColorSimple;
 import net.sourceforge.plantuml.graphic.HtmlColorTransparent;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.mjpeg.MJPEGGenerator;
 import net.sourceforge.plantuml.ugraphic.eps.UGraphicEps;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 import net.sourceforge.plantuml.ugraphic.html5.UGraphicHtml5;
 import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
 import net.sourceforge.plantuml.ugraphic.tikz.UGraphicTikz;
 import net.sourceforge.plantuml.ugraphic.visio.UGraphicVdx;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class ImageBuilder {
 
-	private final FileFormat fileFormat;
 	private final ColorMapper colorMapper;
 	private final double dpiFactor;
 	private final HtmlColor mybackcolor;
@@ -69,6 +81,7 @@ public class ImageBuilder {
 	private final String warningOrError;
 	private final double margin1;
 	private final double margin2;
+	private final Animation affineTransformations;
 
 	// private final AffineTransform affineTransform;
 	// private final boolean withMetadata;
@@ -76,9 +89,8 @@ public class ImageBuilder {
 
 	private UDrawable udrawable;
 
-	public ImageBuilder(FileFormat fileFormat, ColorMapper colorMapper, double dpiFactor, HtmlColor mybackcolor,
-			String metadata, String warningOrError, double margin1, double margin2) {
-		this.fileFormat = fileFormat;
+	public ImageBuilder(ColorMapper colorMapper, double dpiFactor, HtmlColor mybackcolor, String metadata,
+			String warningOrError, double margin1, double margin2, Animation affineTransformations) {
 		this.colorMapper = colorMapper;
 		this.dpiFactor = dpiFactor;
 		this.mybackcolor = mybackcolor;
@@ -86,19 +98,39 @@ public class ImageBuilder {
 		this.warningOrError = warningOrError;
 		this.margin1 = margin1;
 		this.margin2 = margin2;
+		this.affineTransformations = affineTransformations;
 	}
 
 	public void addUDrawable(UDrawable udrawable) {
 		this.udrawable = udrawable;
 	}
 
-	public ImageData writeImageTOBEMOVED(OutputStream os) throws IOException {
+	public ImageData writeImageTOBEMOVED(FileFormat fileFormat, OutputStream os) throws IOException {
+		if (fileFormat == FileFormat.MJPEG) {
+			return writeImageMjpeg(os);
+		} else if (fileFormat == FileFormat.ANIMATED_GIF) {
+			return writeImageAnimatedGif(os);
+		}
+		return writeImageTOBEMOVED(fileFormat, os, affineTransformations);
+	}
 
+	private ImageData writeImageTOBEMOVED(FileFormat fileFormat, OutputStream os, Animation affineTransforms)
+			throws IOException {
 		final LimitFinder limitFinder = new LimitFinder(TextBlockUtils.getDummyStringBounder(), true);
 		udrawable.drawU(limitFinder);
-		final Dimension2D dim = new Dimension2DDouble(limitFinder.getMaxX() + 1 + margin1 + margin2,
-				limitFinder.getMaxY() + 1 + margin1 + margin2);
-		final UGraphic2 ug = createUGraphic(dim);
+		Dimension2D dim = new Dimension2DDouble(limitFinder.getMaxX() + 1 + margin1 + margin2, limitFinder.getMaxY()
+				+ 1 + margin1 + margin2);
+		double dx = 0;
+		double dy = 0;
+		if (affineTransforms != null) {
+			final MinMax minmax = affineTransformations.getMinMax(dim);
+			affineTransforms.setDimension(dim);
+			dim = minmax.getDimension();
+			dx = -minmax.getMinX();
+			dy = -minmax.getMinY();
+		}
+
+		final UGraphic2 ug = createUGraphic(fileFormat, dim, affineTransforms, dx, dy);
 		udrawable.drawU(ug.apply(new UTranslate(margin1, margin1)));
 		ug.writeImageTOBEMOVED(os, metadata, 96);
 		os.flush();
@@ -114,10 +146,80 @@ public class ImageBuilder {
 		return new ImageDataSimple(dim);
 	}
 
-	private UGraphic2 createUGraphic(final Dimension2D dim) {
+	private ImageData writeImageMjpeg(OutputStream os) throws IOException {
+
+		final LimitFinder limitFinder = new LimitFinder(TextBlockUtils.getDummyStringBounder(), true);
+		udrawable.drawU(limitFinder);
+		final Dimension2D dim = new Dimension2DDouble(limitFinder.getMaxX() + 1 + margin1 + margin2,
+				limitFinder.getMaxY() + 1 + margin1 + margin2);
+
+		final File f = new File("c:/tmp.avi");
+
+		final int nbframe = 100;
+
+		final MJPEGGenerator m = new MJPEGGenerator(f, getAviImage(null).getWidth(null), getAviImage(null).getHeight(
+				null), 12.0, nbframe);
+		for (int i = 0; i < nbframe; i++) {
+			// AffineTransform at = AffineTransform.getRotateInstance(1.0);
+			AffineTransform at = AffineTransform.getTranslateInstance(dim.getWidth() / 2, dim.getHeight() / 2);
+			at.rotate(90.0 * Math.PI / 180.0 * i / 100);
+			at.translate(-dim.getWidth() / 2, -dim.getHeight() / 2);
+			// final AffineTransform at = AffineTransform.getTranslateInstance(i, 0);
+			// final ImageIcon ii = new ImageIcon(getAviImage(at));
+			// m.addImage(ii.getImage());
+			throw new UnsupportedOperationException();
+		}
+		m.finishAVI();
+
+		FileUtils.copyToStream(f, os);
+
+		return new ImageDataSimple(dim);
+
+	}
+
+	private ImageData writeImageAnimatedGif(OutputStream os) throws IOException {
+
+		final LimitFinder limitFinder = new LimitFinder(TextBlockUtils.getDummyStringBounder(), true);
+		udrawable.drawU(limitFinder);
+		final Dimension2D dim = new Dimension2DDouble(limitFinder.getMaxX() + 1 + margin1 + margin2,
+				limitFinder.getMaxY() + 1 + margin1 + margin2);
+
+		final MinMax minmax = affineTransformations.getMinMax(dim);
+
+		final AnimatedGifEncoder e = new AnimatedGifEncoder();
+		// e.setQuality(1);
+		e.setRepeat(0);
+		e.start(os);
+		// e.setDelay(1000); // 1 frame per sec
+		// e.setDelay(100); // 10 frame per sec
+		e.setDelay(60); // 16 frame per sec
+		// e.setDelay(50); // 20 frame per sec
+
+		for (AffineTransformation at : affineTransformations.getAll()) {
+			final ImageIcon ii = new ImageIcon(getAviImage(at));
+			e.addFrame((BufferedImage) ii.getImage());
+		}
+		e.finish();
+		return new ImageDataSimple(dim);
+
+	}
+
+	private Image getAviImage(AffineTransformation affineTransform) throws IOException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		writeImageTOBEMOVED(FileFormat.PNG, baos, Animation.singleton(affineTransform));
+		baos.close();
+
+		final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		final Image im = ImageIO.read(bais);
+		bais.close();
+		return im;
+	}
+
+	private UGraphic2 createUGraphic(FileFormat fileFormat, final Dimension2D dim,
+			Animation affineTransforms, double dx, double dy) {
 		switch (fileFormat) {
 		case PNG:
-			return createUGraphicPNG(colorMapper, dpiFactor, dim, mybackcolor);
+			return createUGraphicPNG(colorMapper, dpiFactor, dim, mybackcolor, affineTransforms, dx, dy);
 		case SVG:
 			return createUGraphicSVG(colorMapper, dpiFactor, dim, mybackcolor);
 		case EPS:
@@ -153,7 +255,7 @@ public class ImageBuilder {
 	}
 
 	private UGraphic2 createUGraphicPNG(ColorMapper colorMapper, double dpiFactor, final Dimension2D dim,
-			HtmlColor mybackcolor) {
+			HtmlColor mybackcolor, Animation affineTransforms, double dx, double dy) {
 		Color backColor = Color.WHITE;
 		if (mybackcolor instanceof HtmlColorSimple) {
 			backColor = colorMapper.getMappedColor(mybackcolor);
@@ -171,7 +273,8 @@ public class ImageBuilder {
 		final Graphics2D graphics2D = builder.getGraphics2D();
 
 		// }
-		final UGraphicG2d ug = new UGraphicG2d(colorMapper, graphics2D, dpiFactor);
+		final UGraphicG2d ug = new UGraphicG2d(colorMapper, graphics2D, dpiFactor, affineTransforms == null ? null
+				: affineTransforms.getFirst(), dx, dy);
 		ug.setBufferedImage(builder.getBufferedImage());
 		final BufferedImage im = ((UGraphicG2d) ug).getBufferedImage();
 		if (mybackcolor instanceof HtmlColorGradient) {

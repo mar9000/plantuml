@@ -49,7 +49,7 @@ public abstract class AbstractPSystem implements Diagram {
 		final StringBuilder toAppend = new StringBuilder();
 		toAppend.append("PlantUML version ");
 		toAppend.append(Version.versionString());
-		toAppend.append("(" + new Date(Version.compileTime()) + ")\n");
+		toAppend.append("(" + Version.compileTimeString() + ")\n");
 		toAppend.append("(" + License.getCurrent() + " source distribution)\n");
 		final Properties p = System.getProperties();
 		toAppend.append(p.getProperty("java.runtime.name"));

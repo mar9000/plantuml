@@ -34,6 +34,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.DotSplines;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizLayoutStrategy;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.IHtmlColorSet;
 import net.sourceforge.plantuml.svek.ConditionStyle;
 import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.ugraphic.ColorMapper;
@@ -52,7 +53,7 @@ public interface ISkinParam extends ISkinSimple {
 
 	public UStroke getThickness(LineParam param, Stereotype stereotype);
 
-	public UFont getFont(FontParam fontParam, Stereotype stereotype);
+	public UFont getFont(FontParam fontParam, Stereotype stereotype, boolean inPackageTitle);
 
 	public HorizontalAlignment getHorizontalAlignment(AlignParam param);
 
@@ -99,6 +100,8 @@ public interface ISkinParam extends ISkinSimple {
 	public Rankdir getRankdir();
 	
 	public boolean useOctagonForActivity();
+	
+	public IHtmlColorSet getIHtmlColorSet();
 
 
 }

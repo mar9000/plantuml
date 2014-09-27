@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.sourceforge.plantuml.ColorParam;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.graphic.HtmlColor;
@@ -54,24 +55,27 @@ public final class SvekResult implements IEntityImage, Moveable {
 
 	private final Rose rose = new Rose();
 
-	private final HtmlColor clusterBorder;
+	// private final HtmlColor clusterBorder;
 	private ClusterPosition dim;
 	private final DotData dotData;
 	private final DotStringFactory dotStringFactory;
 	private final boolean hasVerticalLine;
 
-	public SvekResult(ClusterPosition dim, DotData dotData, DotStringFactory dotStringFactory, HtmlColor clusterBorder,
-			boolean hasVerticalLine) {
+	public SvekResult(ClusterPosition dim, DotData dotData, DotStringFactory dotStringFactory, boolean hasVerticalLine) {
 		this.dim = dim;
 		this.dotData = dotData;
 		this.dotStringFactory = dotStringFactory;
-		this.clusterBorder = clusterBorder;
 		this.hasVerticalLine = hasVerticalLine;
 	}
 
+	private static HtmlColor getColor(ColorParam colorParam, ISkinParam skinParam) {
+		return new Rose().getHtmlColor(skinParam, colorParam);
+	}
+
 	public void drawU(UGraphic ug) {
+
 		for (Cluster cluster : dotStringFactory.getBibliotekon().allCluster()) {
-			cluster.drawU(ug, clusterBorder, dotData, new UStroke(1.5));
+			cluster.drawU(ug, dotData, new UStroke(1.5));
 		}
 
 		final Set<Double> xdots = new TreeSet<Double>();
@@ -97,8 +101,10 @@ public final class SvekResult implements IEntityImage, Moveable {
 		final int DASH = 8;
 
 		if (xdots.size() > 0) {
+			final HtmlColor dotColor = getColor(ColorParam.stateBorder, dotData.getSkinParam());
+
 			final double height = calculateDimension(ug.getStringBounder()).getHeight();
-			ug = ug.apply(new UStroke(DASH, 10, THICKNESS_BORDER)).apply(new UChangeColor(clusterBorder));
+			ug = ug.apply(new UStroke(DASH, 10, THICKNESS_BORDER)).apply(new UChangeColor(dotColor));
 			for (Double xv : middeling(xdots)) {
 				ug.apply(new UTranslate(xv, 0)).draw(new ULine(0, height));
 			}

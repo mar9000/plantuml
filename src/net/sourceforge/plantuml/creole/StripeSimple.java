@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.graphic.FontStyle;
 import net.sourceforge.plantuml.graphic.ImgValign;
 import net.sourceforge.plantuml.openiconic.OpenIcon;
 import net.sourceforge.plantuml.ugraphic.Sprite;
+import net.sourceforge.plantuml.utils.CharHidder;
 
 public class StripeSimple implements Stripe {
 
@@ -121,6 +122,7 @@ public class StripeSimple implements Stripe {
 		if (line == null) {
 			throw new IllegalArgumentException();
 		}
+		line = CharHidder.hide(line);
 		if (style.getType() == StripeStyleType.HEADING) {
 			atoms.add(AtomText.createHeading(line, fontConfiguration, style.getOrder()));
 		} else if (style.getType() == StripeStyleType.HORIZONTAL_LINE) {

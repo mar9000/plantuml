@@ -34,18 +34,19 @@ import net.sourceforge.plantuml.Hideable;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.Removeable;
-import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.USymbolInterface;
 import net.sourceforge.plantuml.ugraphic.UFont;
+import net.sourceforge.plantuml.utils.UniqueSequence;
 
 public class Link implements Hideable, Removeable {
 
@@ -353,7 +354,7 @@ public class Link implements Hideable, Removeable {
 	}
 
 	public void setSpecificColor(String s) {
-		this.specificColor = HtmlColorUtils.getColorIfValid(s);
+		this.specificColor = HtmlColorSet.getInstance().getColorIfValid(s);
 	}
 
 	public final boolean isConstraint() {

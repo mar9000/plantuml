@@ -56,7 +56,7 @@ public class PSystemDot extends AbstractPSystem {
 	public ImageData exportDiagram(OutputStream os, int num, FileFormatOption fileFormat) throws IOException {
 		final Graphviz graphviz = GraphvizUtils.create(data, fileFormat.getFileFormat().name().toLowerCase());
 		final ProcessState state = graphviz.createFile3(os);
-		if (state != ProcessState.TERMINATED_OK) {
+		if (state.differs(ProcessState.TERMINATED_OK())) {
 			throw new IllegalStateException("Timeout1 " + state);
 		}
 

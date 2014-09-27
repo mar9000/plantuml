@@ -45,16 +45,26 @@ import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.graphic.GraphicPosition;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
+import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.UAntiAliasing;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.version.PSystemVersion;
 
 public class PSystemDonors extends AbstractPSystem {
 
-	public static final String DONORS = "UDfTKS5kmo0ClVihEFCNA9aYPLqtDJljHXktOILs12HQylMZqWYixyIJxUVtZBBo3-ZW0mCweIWm6Ns1JvGPFCA1CtKUL1hLPsXSBk4A7Pwr3qQJEF90eAXd9nh6iE7ZURt6ZjIk2GwwM4G1QfE8iQ2oD2_GpTd22esH_q4CRN8vU-W2JWEIg9YdcAzEUz33w_WqoWugjeR4YMUFqCvFTVdDCKWYau6tmhKUInfNAOi_clfupcemKVMctHgJdlROT8DZwJviy6xD4WTgSxb7vtl54BpuNPeA4n8NgBVH1BUAWnwurz0-Zlurw2XVz4cq-RiYxYly0baVWDm0";
+	public static final String DONORS = "UDfTKS5kWp0ClVihEESl44n8hEkcijDkRd5BLh1H4j3Ww-TA2sHzfppPVdxFoNlp1tBmGO5SbdCGjdY1Jp8xP823xDHvoECedg5oUuaMQEYCFbZax2WTGywjkAmI2YizdjUhTiHsP3XWieW3b3OIsqE-IyiCpRHRMA2ovZzOe8uk9mzDeB4ZpWgHKVELSGzvU1sUHiL18Rtbx2IJ9wYdfxhv5WqIoMZXBN6DGqfrLTxJ3tAhvomwgwetT8icFMsn-GR7r7rOuRstimwKzd9Nvrl5ChpuJPeJ4uPcADV11hTa1-oaHQWVH__gKEMJFaFz_bsA-w9dOWpQf_xKro-CX8Mp";
+
+//	public ImageData exportDiagram(OutputStream os, int num, FileFormatOption fileFormat) throws IOException {
+//		return getGraphicStrings().exportDiagram(os, fileFormat);
+//	}
 
 	public ImageData exportDiagram(OutputStream os, int num, FileFormatOption fileFormat) throws IOException {
-		return getGraphicStrings().exportDiagram(os, fileFormat);
+		final GraphicStrings result = getGraphicStrings();
+		final ImageBuilder imageBuilder = new ImageBuilder(new ColorMapperIdentity(), 1.0, result.getBackcolor(),
+				getMetadata(), null, 0, 0, null);
+		imageBuilder.addUDrawable(result);
+		return imageBuilder.writeImageTOBEMOVED(fileFormat.getFileFormat(), os);
 	}
 
 	private GraphicStrings getGraphicStrings() throws IOException {

@@ -42,7 +42,6 @@ import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.sequencediagram.LifeEventType;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.ParticipantType;
@@ -61,10 +60,10 @@ public abstract class CommandParticipant extends SingleLineCommand2<SequenceDiag
 	}
 
 	@Override
-	final protected CommandExecutionResult executeArg(SequenceDiagram system, RegexResult arg) {
+	final protected CommandExecutionResult executeArg(SequenceDiagram diagram, RegexResult arg) {
 		final String code = arg.get("CODE", 0);
-		if (system.participants().containsKey(code)) {
-			system.putParticipantInLast(code);
+		if (diagram.participants().containsKey(code)) {
+			diagram.putParticipantInLast(code);
 			return CommandExecutionResult.ok();
 		}
 
@@ -87,28 +86,29 @@ public abstract class CommandParticipant extends SingleLineCommand2<SequenceDiag
 			type = ParticipantType.valueOf(typeString1.toUpperCase());
 			create = false;
 		}
-		final Participant participant = system.createNewParticipant(type, code, strings);
+		final Participant participant = diagram.createNewParticipant(type, code, strings);
 
 		final String stereotype = arg.get("STEREO", 0);
 
 		if (stereotype != null) {
-			final ISkinParam skinParam = system.getSkinParam();
+			final ISkinParam skinParam = diagram.getSkinParam();
 			final boolean stereotypePositionTop = skinParam.stereotypePositionTop();
-			final UFont font = skinParam.getFont(FontParam.CIRCLED_CHARACTER, null);
-			participant.setStereotype(new Stereotype(stereotype, skinParam.getCircledCharacterRadius(), font),
-					stereotypePositionTop);
+			final UFont font = skinParam.getFont(FontParam.CIRCLED_CHARACTER, null, false);
+			participant.setStereotype(new Stereotype(stereotype, skinParam.getCircledCharacterRadius(), font, diagram
+					.getSkinParam().getIHtmlColorSet()), stereotypePositionTop);
 		}
-		participant.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(arg.get("COLOR", 0)));
+		participant
+				.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("COLOR", 0)));
 
 		final String urlString = arg.get("URL", 0);
 		if (urlString != null) {
-			final UrlBuilder urlBuilder = new UrlBuilder(system.getSkinParam().getValue("topurl"), ModeUrl.STRICT);
+			final UrlBuilder urlBuilder = new UrlBuilder(diagram.getSkinParam().getValue("topurl"), ModeUrl.STRICT);
 			final Url url = urlBuilder.getUrl(urlString);
 			participant.setUrl(url);
 		}
 
 		if (create) {
-			final String error = system.activate(participant, LifeEventType.CREATE, null);
+			final String error = diagram.activate(participant, LifeEventType.CREATE, null);
 			if (error != null) {
 				return CommandExecutionResult.error(error);
 			}

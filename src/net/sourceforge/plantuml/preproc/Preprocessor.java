@@ -36,13 +36,14 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.regex.MyPattern;
+import net.sourceforge.plantuml.utils.StartUtils;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class Preprocessor implements ReadLine {
 
 	private static final String ID = "[A-Za-z_][A-Za-z_0-9]*";
-	private static final String ARG = "(?:\\(" + ID + "(?:," + ID + ")*\\))?";
+	private static final String ARG = "(?:\\(" + ID + "(?:," + ID + ")*?\\))?";
 	private static final Pattern definePattern = MyPattern.cmpile("^[%s]*!define[%s]+(" + ID + ARG + ")"
 			+ "(?:[%s]+(.*))?$");
 	private static final Pattern undefPattern = MyPattern.cmpile("^[%s]*!undef[%s]+(" + ID + ")$");
@@ -55,6 +56,7 @@ public class Preprocessor implements ReadLine {
 
 	public Preprocessor(ReadLine reader, String charset, Defines defines, Set<File> filesUsed, File newCurrentDir) {
 		this.defines = defines;
+		this.defines.saveState();
 		this.rawSource = new PreprocessorInclude(reader, defines, charset, filesUsed, newCurrentDir);
 		this.source = new ReadLineInsertable(new IfManager(rawSource, defines));
 	}
@@ -63,6 +65,9 @@ public class Preprocessor implements ReadLine {
 		final String s = source.readLine();
 		if (s == null) {
 			return null;
+		}
+		if (StartUtils.isArobaseStartDiagram(s)) {
+			this.defines.restoreState();
 		}
 
 		Matcher m = definePattern.matcher(s);
@@ -80,12 +85,20 @@ public class Preprocessor implements ReadLine {
 			return manageUndef(m);
 		}
 
+		if (ignoreDefineDuringSeveralLines > 0) {
+			ignoreDefineDuringSeveralLines--;
+			return s;
+		}
+
 		final List<String> result = defines.applyDefines(s);
 		if (result.size() > 1) {
+			ignoreDefineDuringSeveralLines = result.size() - 2;
 			source.insert(result.subList(1, result.size() - 1));
 		}
 		return result.get(0);
 	}
+
+	private int ignoreDefineDuringSeveralLines = 0;
 
 	private String manageUndef(Matcher m) throws IOException {
 		defines.undefine(m.group(1));

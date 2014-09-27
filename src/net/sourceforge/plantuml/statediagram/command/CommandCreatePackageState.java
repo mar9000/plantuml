@@ -81,14 +81,14 @@ public class CommandCreatePackageState extends SingleLineCommand2<StateDiagram> 
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(StateDiagram system, RegexResult arg) {
-		final IGroup currentPackage = system.getCurrentGroup();
+	protected CommandExecutionResult executeArg(StateDiagram diagram, RegexResult arg) {
+		final IGroup currentPackage = diagram.getCurrentGroup();
 		final Code code = Code.of(getNotNull(arg, "CODE1", "CODE2"));
 		String display = getNotNull(arg, "DISPLAY1", "DISPLAY2");
 		if (display == null) {
 			display = code.getFullName();
 		}
-		final IEntity p = system.getOrCreateGroup(code, Display.getWithNewlines(display), null, GroupType.STATE,
+		final IEntity p = diagram.getOrCreateGroup(code, Display.getWithNewlines(display), null, GroupType.STATE,
 				currentPackage);
 		final String stereotype = arg.get("STEREOTYPE", 0);
 		if (stereotype != null) {
@@ -96,12 +96,12 @@ public class CommandCreatePackageState extends SingleLineCommand2<StateDiagram> 
 		}
 		final String urlString = arg.get("URL", 0);
 		if (urlString != null) {
-			final UrlBuilder urlBuilder = new UrlBuilder(system.getSkinParam().getValue("topurl"), ModeUrl.STRICT);
+			final UrlBuilder urlBuilder = new UrlBuilder(diagram.getSkinParam().getValue("topurl"), ModeUrl.STRICT);
 			final Url url = urlBuilder.getUrl(urlString);
 			p.addUrl(url);
 		}
-		p.setSpecificBackcolor(HtmlColorUtils.getColorIfValid(arg.get("COLOR", 0)));
-		p.setSpecificLineColor(HtmlColorUtils.getColorIfValid(arg.get("LINECOLOR", 1)));
+		p.setSpecificBackcolor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("COLOR", 0)));
+		p.setSpecificLineColor(diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("LINECOLOR", 1)));
 		CommandCreateClassMultilines.applyStroke(p, arg.get("LINECOLOR", 0));
 		return CommandExecutionResult.ok();
 	}

@@ -37,7 +37,7 @@ import java.io.File;
  * 
  */
 public enum FileFormat {
-	PNG, SVG, EPS, EPS_TEXT, ATXT, UTXT, XMI_STANDARD, XMI_STAR, XMI_ARGO, PDF, MJPEG, HTML, HTML5, VDX, LATEX, BASE64;
+	PNG, SVG, EPS, EPS_TEXT, ATXT, UTXT, XMI_STANDARD, XMI_STAR, XMI_ARGO, PDF, MJPEG, ANIMATED_GIF, HTML, HTML5, VDX, LATEX, BASE64;
 
 	/**
 	 * Returns the file format to be used for that format.
@@ -47,6 +47,12 @@ public enum FileFormat {
 	public String getFileSuffix() {
 		if (name().startsWith("XMI")) {
 			return ".xmi";
+		}
+		if (this == MJPEG) {
+			return ".avi";
+		}
+		if (this == ANIMATED_GIF) {
+			return ".gif";
 		}
 		if (this == EPS_TEXT) {
 			return EPS.getFileSuffix();

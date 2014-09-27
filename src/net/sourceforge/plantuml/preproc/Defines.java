@@ -39,6 +39,7 @@ import java.util.regex.Matcher;
 public class Defines {
 
 	private final Map<String, String> values = new LinkedHashMap<String, String>();
+	private final Map<String, String> savedState = new LinkedHashMap<String, String>();
 
 	public void define(String name, List<String> value) {
 		values.put(name, addLineReturn(value));
@@ -59,7 +60,12 @@ public class Defines {
 	}
 
 	public boolean isDefine(String name) {
-		return values.containsKey(name);
+		for (String key : values.keySet()) {
+			if (key.equals(name) || key.startsWith(name + "(")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void undefine(String name) {
@@ -82,9 +88,9 @@ public class Defines {
 
 				while (st.hasMoreTokens()) {
 					if (st.hasMoreTokens()) {
-						regex.append("([^,]*)");
+						regex.append("([^,]*?)");
 					} else {
-						regex.append("([^)]*)");
+						regex.append("([^)]*?)");
 					}
 					final String var1 = st.nextToken();
 					final String var2 = "(##" + var1 + "\\b)|(\\b" + var1 + "##)|(\\b" + var1 + "\\b)";
@@ -103,6 +109,20 @@ public class Defines {
 			}
 		}
 		return Arrays.asList(line.split("\n"));
+	}
+
+	public void saveState() {
+		if (savedState.size() > 0) {
+			throw new IllegalStateException();
+		}
+		this.savedState.putAll(values);
+
+	}
+
+	public void restoreState() {
+		this.values.clear();
+		this.values.putAll(savedState);
+
 	}
 
 }

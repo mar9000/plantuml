@@ -30,7 +30,6 @@ package net.sourceforge.plantuml.command.note.sequence;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.UrlBuilder;
 import net.sourceforge.plantuml.UrlBuilder.ModeUrl;
@@ -48,6 +47,7 @@ import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.sequencediagram.AbstractMessage;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public final class FactorySequenceNoteOnArrowCommand implements SingleMultiFactoryCommand<SequenceDiagram> {
 
@@ -80,7 +80,8 @@ public final class FactorySequenceNoteOnArrowCommand implements SingleMultiFacto
 	}
 
 	public Command<SequenceDiagram> createMultiLine() {
-		return new CommandMultilines2<SequenceDiagram>(getRegexConcatMultiLine(), MultilinesStrategy.KEEP_STARTING_QUOTE) {
+		return new CommandMultilines2<SequenceDiagram>(getRegexConcatMultiLine(),
+				MultilinesStrategy.KEEP_STARTING_QUOTE) {
 
 			@Override
 			public String getPatternEnd() {
@@ -97,24 +98,22 @@ public final class FactorySequenceNoteOnArrowCommand implements SingleMultiFacto
 		};
 	}
 
-	private CommandExecutionResult executeInternal(SequenceDiagram system, final RegexResult line0,
-			final List<String> in) {
+	private CommandExecutionResult executeInternal(SequenceDiagram system, final RegexResult line0, List<String> in) {
 		final AbstractMessage m = system.getLastMessage();
 		if (m != null) {
 			final NotePosition position = NotePosition.valueOf(line0.get("POSITION", 0).toUpperCase());
-			List<CharSequence> strings = StringUtils.manageEmbededDiagrams2(in);
 			final Url url;
-			if (strings.size() > 0) {
+			if (in.size() > 0) {
 				final UrlBuilder urlBuilder = new UrlBuilder(system.getSkinParam().getValue("topurl"), ModeUrl.STRICT);
-				url = urlBuilder.getUrl(strings.get(0).toString());
+				url = urlBuilder.getUrl(in.get(0).toString());
 			} else {
 				url = null;
 			}
 			if (url != null) {
-				strings = strings.subList(1, strings.size());
+				in = in.subList(1, in.size());
 			}
 
-			m.setNote(Display.create(strings), position, line0.get("COLOR", 0), url);
+			m.setNote(Display.create(in), position, line0.get("COLOR", 0), url);
 		}
 
 		return CommandExecutionResult.ok();

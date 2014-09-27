@@ -48,8 +48,11 @@ import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.DiagramDescriptionImpl;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.salt.element.Element;
 import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
+import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.UAntiAliasing;
 import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -73,6 +76,23 @@ public class PSystemSalt extends AbstractPSystem {
 	}
 
 	public ImageData exportDiagram(OutputStream os, int num, FileFormatOption fileFormat) throws IOException {
+		final Element salt = SaltUtils.createElement(data);
+
+		final Dimension2D size = salt.getPreferredDimension(TextBlockUtils.getDummyStringBounder(), 0, 0);
+		final ImageBuilder builder = new ImageBuilder(new ColorMapperIdentity(), 1.0, HtmlColorUtils.WHITE, null,
+				null, 5, 5, null);
+		builder.addUDrawable(new UDrawable() {
+
+			public void drawU(UGraphic ug) {
+				ug = ug.apply(new UChangeColor(HtmlColorUtils.BLACK));
+				salt.drawU(ug, 0, new Dimension2DDouble(size.getWidth(), size.getHeight()));
+				salt.drawU(ug, 1, new Dimension2DDouble(size.getWidth(), size.getHeight()));
+			}
+		});
+		return builder.writeImageTOBEMOVED(fileFormat.getFileFormat(), os);
+	}
+
+	private ImageData exportDiagramOld(OutputStream os, int num, FileFormatOption fileFormat) throws IOException {
 		final Element salt = SaltUtils.createElement(data);
 
 		EmptyImageBuilder builder = new EmptyImageBuilder(10, 10, Color.WHITE);

@@ -34,11 +34,10 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactoryDelegator;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
-import net.sourceforge.plantuml.skin.rose.Rose;
 
 public class FtileFactoryDelegatorAddNote extends FtileFactoryDelegator {
 
-	private final Rose rose = new Rose();
+	// private final Rose rose = new Rose();
 
 	public FtileFactoryDelegatorAddNote(FtileFactory factory, ISkinParam skinParam) {
 		super(factory, skinParam);

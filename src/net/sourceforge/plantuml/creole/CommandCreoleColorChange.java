@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.graphic.Splitter;
 
 public class CommandCreoleColorChange implements Command {
@@ -68,7 +68,7 @@ public class CommandCreoleColorChange implements Command {
 			throw new IllegalStateException();
 		}
 		final FontConfiguration fc1 = stripe.getActualFontConfiguration();
-		final HtmlColor color = HtmlColorUtils.getColorIfValid(m.group(2));
+		final HtmlColor color = HtmlColorSet.getInstance().getColorIfValid(m.group(2));
 		final FontConfiguration fc2 = fc1.changeColor(color);
 		stripe.setActualFontConfiguration(fc2);
 		stripe.analyzeAndAdd(m.group(3));

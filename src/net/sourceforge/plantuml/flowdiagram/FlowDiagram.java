@@ -113,8 +113,7 @@ public class FlowDiagram extends UmlDiagram implements TextBlock {
 	}
 
 	@Override
-	protected ImageData exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption,
-			List<BufferedImage> flashcodes) throws IOException {
+	protected ImageData exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption) throws IOException {
 		UGraphicUtils.writeImage(os, null, fileFormatOption, new ColorMapperIdentity(), HtmlColorUtils.WHITE, this);
 		return new ImageDataSimple();
 	}

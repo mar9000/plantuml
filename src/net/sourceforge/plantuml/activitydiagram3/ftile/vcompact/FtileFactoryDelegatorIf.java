@@ -52,9 +52,9 @@ public class FtileFactoryDelegatorIf extends FtileFactoryDelegator {
 	public Ftile createIf(Swimlane swimlane, List<Branch> thens, Branch elseBranch) {
 
 		final ConditionStyle conditionStyle = getSkinParam().getConditionStyle();
-		final UFont fontArrow = getSkinParam().getFont(FontParam.ACTIVITY_ARROW, null);
+		final UFont fontArrow = getSkinParam().getFont(FontParam.ACTIVITY_ARROW, null, false);
 		final UFont fontTest = getSkinParam().getFont(
-				conditionStyle == ConditionStyle.INSIDE ? FontParam.ACTIVITY_DIAMOND : FontParam.ACTIVITY_ARROW, null);
+				conditionStyle == ConditionStyle.INSIDE ? FontParam.ACTIVITY_DIAMOND : FontParam.ACTIVITY_ARROW, null, false);
 		final Branch branch0 = thens.get(0);
 
 		final HtmlColor borderColor = getRose().getHtmlColor(getSkinParam(), ColorParam.activityBorder);

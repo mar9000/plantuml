@@ -43,12 +43,10 @@ public class OptionFlags {
 	static public boolean GRAPHVIZCACHE = false;
 	static public final boolean TRACE_DOT = false;
 
-	static public final boolean HORIZONTAL_LINE_BETWEEN_DIFFERENT_PACKAGE_ALLOWED = false;
 	static public boolean ALLOW_INCLUDE = true;
 
 	static public final boolean USE_HECTOR = false;
 	static public boolean ADD_NICE_FOR_DOT = false;
-	static public final boolean CRASH_SPRITE = false;
 	static public final boolean STRICT_SELFMESSAGE_POSITION = true;
 	static public final boolean TEOZ = false;
 	static public final boolean USE_INTERFACE_EYE1 = false;

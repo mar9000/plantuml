@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicInteger;
 
+// Used by the Eclipse Plugin, so do not change package location.
 public class FileUtils {
 
 	private static AtomicInteger counter;

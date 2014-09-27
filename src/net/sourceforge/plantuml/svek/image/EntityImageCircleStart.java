@@ -46,9 +46,11 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 public class EntityImageCircleStart extends AbstractEntityImage {
 
 	private static final int SIZE = 20;
+	private final ColorParam colorParam; // = ColorParam.activityStart;
 
-	public EntityImageCircleStart(ILeaf entity, ISkinParam skinParam) {
+	public EntityImageCircleStart(ILeaf entity, ISkinParam skinParam, ColorParam colorParam) {
 		super(entity, skinParam);
+		this.colorParam = colorParam;
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {
@@ -60,7 +62,7 @@ public class EntityImageCircleStart extends AbstractEntityImage {
 		if (getSkinParam().shadowing()) {
 			circle.setDeltaShadow(3);
 		}
-		ug.apply(new UChangeBackColor(SkinParamUtils.getColor(getSkinParam(), ColorParam.activityStart, getStereo())))
+		ug.apply(new UChangeBackColor(SkinParamUtils.getColor(getSkinParam(), colorParam, getStereo())))
 				.apply(new UChangeColor(null)).draw(circle);
 	}
 

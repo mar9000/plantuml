@@ -35,8 +35,6 @@ import java.util.List;
 
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.BlockMember;
 import net.sourceforge.plantuml.cucadiagram.BlockMemberImpl;
@@ -66,6 +64,8 @@ import net.sourceforge.plantuml.svek.IEntityImage;
 import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.svek.SingleStrategy;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.utils.StringUtils;
+import net.sourceforge.plantuml.utils.UniqueSequence;
 
 final class EntityImpl implements ILeaf, IGroup {
 
@@ -108,6 +108,7 @@ final class EntityImpl implements ILeaf, IGroup {
 	private boolean removed = false;
 	private HtmlColor specificLineColor;
 	private UStroke specificStroke;
+	private USymbol symbol;
 
 	// Back to Entity
 	public final boolean isTop() {
@@ -548,8 +549,6 @@ final class EntityImpl implements ILeaf, IGroup {
 		return false;
 	}
 
-	private USymbol symbol;
-
 	public USymbol getUSymbol() {
 		return symbol;
 	}
@@ -609,7 +608,6 @@ final class EntityImpl implements ILeaf, IGroup {
 	}
 
 	public void setHectorLayer(int layer) {
-		// System.err.println("layer=" + layer);
 		this.layer = layer;
 		if (layer > 1000) {
 			throw new IllegalArgumentException();
@@ -618,6 +616,13 @@ final class EntityImpl implements ILeaf, IGroup {
 
 	public LongCode getLongCode() {
 		return longCode;
+	}
+
+	public FontParam getTitleFontParam() {
+		if (symbol != null) {
+			return symbol.getFontParam();
+		}
+		return getGroupType() == GroupType.STATE ? FontParam.STATE : FontParam.PACKAGE;
 	}
 
 }

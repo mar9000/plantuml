@@ -40,8 +40,8 @@ import java.util.regex.Pattern;
 import net.sourceforge.plantuml.FileSystem;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.regex.MyPattern;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 class PreprocessorInclude implements ReadLine {
 

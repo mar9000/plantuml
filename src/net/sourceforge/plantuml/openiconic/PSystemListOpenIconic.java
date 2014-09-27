@@ -45,13 +45,19 @@ import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.openiconic.data.DummyIcon;
+import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
+import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.UAntiAliasing;
 import net.sourceforge.plantuml.ugraphic.UFont;
 
 public class PSystemListOpenIconic extends AbstractPSystem {
 
 	public ImageData exportDiagram(OutputStream os, int num, FileFormatOption fileFormat) throws IOException {
-		return getGraphicStrings().exportDiagram(os, fileFormat);
+		final GraphicStrings result = getGraphicStrings();
+		final ImageBuilder imageBuilder = new ImageBuilder(new ColorMapperIdentity(), 1.0, result.getBackcolor(),
+				getMetadata(), null, 0, 0, null);
+		imageBuilder.addUDrawable(result);
+		return imageBuilder.writeImageTOBEMOVED(fileFormat.getFileFormat(), os);
 	}
 
 	private GraphicStrings getGraphicStrings() throws IOException {

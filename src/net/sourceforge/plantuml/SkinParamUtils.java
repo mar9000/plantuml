@@ -38,7 +38,7 @@ public class SkinParamUtils {
 	private static final Rose rose = new Rose();
 
 	public static UFont getFont(ISkinParam skinParam, FontParam fontParam, Stereotype stereo) {
-		return skinParam.getFont(fontParam, stereo);
+		return skinParam.getFont(fontParam, stereo, false);
 	}
 
 	public static HtmlColor getFontColor(ISkinParam skinParam, FontParam fontParam, Stereotype stereo) {

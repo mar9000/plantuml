@@ -29,10 +29,8 @@
 package net.sourceforge.plantuml.sequencediagram.teoz;
 
 import java.awt.geom.Dimension2D;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -57,8 +55,7 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 	private final FileFormatOption fileFormatOption;
 	private final Skin skin;
 
-	public SequenceDiagramFileMakerTeoz(SequenceDiagram sequenceDiagram, Skin skin, FileFormatOption fileFormatOption,
-			List<BufferedImage> flashcodes) {
+	public SequenceDiagramFileMakerTeoz(SequenceDiagram sequenceDiagram, Skin skin, FileFormatOption fileFormatOption) {
 		this.diagram = sequenceDiagram;
 		this.fileFormatOption = fileFormatOption;
 		this.skin = skin;
@@ -76,7 +73,8 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 		LivingSpace last = null;
 		LivingSpaces livingSpaces = new LivingSpaces();
 		for (Participant p : diagram.participants().values()) {
-			final LivingSpace livingSpace = new LivingSpace(p, diagram.getEnglober(p), skin, skinParam, currentPos, diagram.events());
+			final LivingSpace livingSpace = new LivingSpace(p, diagram.getEnglober(p), skin, skinParam, currentPos,
+					diagram.events());
 			last = livingSpace;
 			((LivingSpaces) livingSpaces).put(p, livingSpace);
 			final Dimension2D headDim = livingSpace.getHeadPreferredDimension(stringBounder);
@@ -98,7 +96,8 @@ public class SequenceDiagramFileMakerTeoz implements FileMaker {
 		System.err.println("max1=" + max1.getCurrentValue());
 
 		final Dimension2D dim = new Dimension2DDouble(max1.getCurrentValue() - min1.getCurrentValue(), height);
-		final UGraphic2 ug = (UGraphic2) fileFormatOption.createUGraphic(dim).apply(new UTranslate(-min1.getCurrentValue(), 0));
+		final UGraphic2 ug = (UGraphic2) fileFormatOption.createUGraphic(dim).apply(
+				new UTranslate(-min1.getCurrentValue(), 0));
 		stringBounder = ug.getStringBounder();
 
 		drawHeads(ug, livingSpaces);

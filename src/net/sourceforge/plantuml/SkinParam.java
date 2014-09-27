@@ -46,7 +46,9 @@ import net.sourceforge.plantuml.cucadiagram.dot.DotSplines;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizLayoutStrategy;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.HtmlColorSetSimple;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.graphic.IHtmlColorSet;
 import net.sourceforge.plantuml.svek.ConditionStyle;
 import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.ugraphic.ColorMapper;
@@ -55,6 +57,7 @@ import net.sourceforge.plantuml.ugraphic.ColorMapperMonochrome;
 import net.sourceforge.plantuml.ugraphic.Sprite;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class SkinParam implements ISkinParam {
 
@@ -80,15 +83,19 @@ public class SkinParam implements ISkinParam {
 	static String cleanForKey(String key) {
 		key = key.toLowerCase().trim();
 		key = key.replaceAll("_|\\.|\\s", "");
-		key = key.replaceAll("partition", "package");
-		key = key.replaceAll("sequenceparticipant", "participant");
-		key = key.replaceAll("sequenceactor", "actor");
-		key = key.replaceAll("activityarrow", "genericarrow");
-		key = key.replaceAll("objectarrow", "genericarrow");
-		key = key.replaceAll("classarrow", "genericarrow");
-		key = key.replaceAll("componentarrow", "genericarrow");
-		key = key.replaceAll("statearrow", "genericarrow");
-		key = key.replaceAll("usecasearrow", "genericarrow");
+		key = replaceSmart(key, "partition", "package");
+		key = replaceSmart(key, "sequenceparticipant", "participant");
+		key = replaceSmart(key, "sequenceactor", "actor");
+		if (key.contains("arrow")) {
+			key = key.replaceAll("activityarrow|objectarrow|classarrow|componentarrow|statearrow|usecasearrow",
+					"genericarrow");
+		}
+		// // key = key.replaceAll("activityarrow", "genericarrow");
+		// // key = key.replaceAll("objectarrow", "genericarrow");
+		// // key = key.replaceAll("classarrow", "genericarrow");
+		// // key = key.replaceAll("componentarrow", "genericarrow");
+		// // key = key.replaceAll("statearrow", "genericarrow");
+		// // key = key.replaceAll("usecasearrow", "genericarrow");
 		final Matcher m = stereoPattern.matcher(key);
 		if (m.find()) {
 			final String s = m.group(1);
@@ -96,6 +103,13 @@ public class SkinParam implements ISkinParam {
 			key += "<<" + s + ">>";
 		}
 		return key;
+	}
+
+	private static String replaceSmart(String s, String src, String target) {
+		if (s.contains(src) == false) {
+			return s;
+		}
+		return s.replaceAll(src, target);
 	}
 
 	public HtmlColor getHyperlinkColor() {
@@ -137,8 +151,8 @@ public class SkinParam implements ISkinParam {
 		if (stereotype != null) {
 			checkStereotype(stereotype);
 			final String value2 = getValue(param.name() + "color" + stereotype.getLabel());
-			if (value2 != null && HtmlColorUtils.getColorIfValid(value2) != null) {
-				return HtmlColorUtils.getColorIfValid(value2);
+			if (value2 != null && getIHtmlColorSet().getColorIfValid(value2) != null) {
+				return getIHtmlColorSet().getColorIfValid(value2);
 			}
 		}
 		final String value = getValue(getParamName(param, clickable));
@@ -146,7 +160,7 @@ public class SkinParam implements ISkinParam {
 		if (value == null) {
 			return null;
 		}
-		return HtmlColorUtils.getColorIfValid(value, acceptTransparent);
+		return getIHtmlColorSet().getColorIfValid(value, acceptTransparent);
 	}
 
 	private String getParamName(ColorParam param, boolean clickable) {
@@ -160,9 +174,9 @@ public class SkinParam implements ISkinParam {
 	}
 
 	private void checkStereotype(Stereotype stereotype) {
-//		if (stereotype.startsWith("<<") == false || stereotype.endsWith(">>") == false) {
-//			throw new IllegalArgumentException();
-//		}
+		// if (stereotype.startsWith("<<") == false || stereotype.endsWith(">>") == false) {
+		// throw new IllegalArgumentException();
+		// }
 	}
 
 	private int getFontSize(FontParam param, Stereotype stereotype) {
@@ -211,19 +225,19 @@ public class SkinParam implements ISkinParam {
 			checkStereotype(stereotype);
 			value = getValue(param.name() + "fontcolor" + stereotype.getLabel());
 		}
-		if (value == null || HtmlColorUtils.getColorIfValid(value) == null) {
+		if (value == null || getIHtmlColorSet().getColorIfValid(value) == null) {
 			value = getValue(param.name() + "fontcolor");
 		}
-		if (value == null || HtmlColorUtils.getColorIfValid(value) == null) {
+		if (value == null || getIHtmlColorSet().getColorIfValid(value) == null) {
 			value = getValue("defaultfontcolor");
 		}
-		if (value == null || HtmlColorUtils.getColorIfValid(value) == null) {
+		if (value == null || getIHtmlColorSet().getColorIfValid(value) == null) {
 			value = param.getDefaultColor();
 		}
-		return HtmlColorUtils.getColorIfValid(value);
+		return getIHtmlColorSet().getColorIfValid(value);
 	}
 
-	private int getFontStyle(FontParam param, Stereotype stereotype) {
+	private int getFontStyle(FontParam param, Stereotype stereotype, boolean inPackageTitle) {
 		String value = null;
 		if (stereotype != null) {
 			checkStereotype(stereotype);
@@ -236,7 +250,7 @@ public class SkinParam implements ISkinParam {
 			value = getValue("defaultfontstyle");
 		}
 		if (value == null) {
-			return param.getDefaultFontStyle(this);
+			return param.getDefaultFontStyle(this, inPackageTitle);
 		}
 		int result = Font.PLAIN;
 		if (value.toLowerCase().contains("bold")) {
@@ -248,13 +262,14 @@ public class SkinParam implements ISkinParam {
 		return result;
 	}
 
-	public UFont getFont(FontParam fontParam, Stereotype stereotype) {
+	public UFont getFont(FontParam fontParam, Stereotype stereotype, boolean inPackageTitle) {
 		if (stereotype != null) {
 			checkStereotype(stereotype);
 		}
 		final String fontFamily = getFontFamily(fontParam, stereotype);
-		final int fontStyle = getFontStyle(fontParam, stereotype);
-		return new UFont(fontFamily, fontStyle, getFontSize(fontParam, stereotype));
+		final int fontStyle = getFontStyle(fontParam, stereotype, inPackageTitle);
+		final int fontSize = getFontSize(fontParam, stereotype);
+		return new UFont(fontFamily, fontStyle, fontSize);
 	}
 
 	public int getCircledCharacterRadius() {
@@ -527,7 +542,7 @@ public class SkinParam implements ISkinParam {
 	public boolean sameClassWidth() {
 		return "true".equals(getValue("sameclasswidth"));
 	}
-	
+
 	public final Rankdir getRankdir() {
 		return rankdir;
 	}
@@ -535,7 +550,7 @@ public class SkinParam implements ISkinParam {
 	public final void setRankdir(Rankdir rankdir) {
 		this.rankdir = rankdir;
 	}
-	
+
 	public boolean useOctagonForActivity() {
 		final String value = getValue("activityshape");
 		if ("roundedbox".equalsIgnoreCase(value)) {
@@ -547,6 +562,10 @@ public class SkinParam implements ISkinParam {
 		return false;
 	}
 
+	private final IHtmlColorSet htmlColorSet = new HtmlColorSetSimple();
 
+	public IHtmlColorSet getIHtmlColorSet() {
+		return htmlColorSet;
+	}
 
 }

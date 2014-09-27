@@ -30,7 +30,6 @@ package net.sourceforge.plantuml.activitydiagram3.command;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.activitydiagram3.ActivityDiagram3;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
@@ -42,6 +41,7 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class CommandIf2Multilines extends CommandMultilines2<ActivityDiagram3> {
 
@@ -70,7 +70,7 @@ public class CommandIf2Multilines extends CommandMultilines2<ActivityDiagram3> {
 		final List<String> lineLast = StringUtils.getSplit(MyPattern.cmpile(getPatternEnd()),
 				lines.get(lines.size() - 1));
 
-		final HtmlColor color = HtmlColorUtils.getColorIfValid(line0.get("COLOR", 0));
+		final HtmlColor color = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(line0.get("COLOR", 0));
 
 		final String test = line0.get("TEST", 0);
 		Display testDisplay = Display.getWithNewlines(test);

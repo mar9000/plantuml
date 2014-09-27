@@ -46,9 +46,9 @@ public class FtileFactoryDelegatorCreateGroup extends FtileFactoryDelegator {
 	}
 
 	@Override
-	public Ftile createGroup(Ftile list, Display name, HtmlColor backColor, HtmlColor titleColor) {
+	public Ftile createGroup(Ftile list, Display name, HtmlColor backColor, HtmlColor titleColor, Display headerNote) {
 		final HtmlColor arrowColor = rose.getHtmlColor(getSkinParam(), ColorParam.activityArrow);
-		return new FtileGroup(list, name, arrowColor, backColor, titleColor, this);
+		return new FtileGroup(list, name, headerNote, arrowColor, backColor, titleColor, getSkinParam());
 	}
 
 }

@@ -65,15 +65,15 @@ public class PSystemCreole extends AbstractPSystem {
 	public ImageData exportDiagram(OutputStream os, int num, FileFormatOption fileFormat) throws IOException {
 		final Display display = Display.create(lines);
 		final UFont font = new UFont("Serif", Font.PLAIN, 14);
-		final FontConfiguration fontConfiguration = new FontConfiguration(font, HtmlColorUtils.BLACK, HtmlColorUtils.BLUE);
+		final FontConfiguration fontConfiguration = new FontConfiguration(font, HtmlColorUtils.BLACK,
+				HtmlColorUtils.BLUE);
 		final Sheet sheet = new CreoleParser(fontConfiguration, HorizontalAlignment.LEFT, null, false)
 				.createSheet(display);
 		final SheetBlock1 sheetBlock = new SheetBlock1(sheet, 0);
 
-		final ImageBuilder builder = new ImageBuilder(fileFormat.getFileFormat(), new ColorMapperIdentity(), 1.0, null,
-				null, null, 0, 0);
+		final ImageBuilder builder = new ImageBuilder(new ColorMapperIdentity(), 1.0, null, null, null, 0, 0, null);
 		builder.addUDrawable(sheetBlock);
-		return builder.writeImageTOBEMOVED(os);
+		return builder.writeImageTOBEMOVED(fileFormat.getFileFormat(), os);
 
 		// final Dimension2D dim = TextBlockUtils.getDimension(sheetBlock);
 		// final UGraphic2 ug = fileFormat.createUGraphic(new ColorMapperIdentity(), 1, dim, null, false);

@@ -33,6 +33,7 @@ import java.awt.Color;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.HtmlColorSimple;
 import net.sourceforge.plantuml.graphic.HtmlColorTransparent;
+import net.sourceforge.plantuml.graphic.HtmlColorUserDef;
 
 public class ColorMapperIdentity implements ColorMapper {
 
@@ -42,6 +43,9 @@ public class ColorMapperIdentity implements ColorMapper {
 		}
 		if (color instanceof HtmlColorTransparent) {
 			throw new UnsupportedOperationException();
+		}
+		if (color instanceof HtmlColorUserDef) {
+			return Color.RED;
 		}
 		return ((HtmlColorSimple) color).getColor999();
 	}

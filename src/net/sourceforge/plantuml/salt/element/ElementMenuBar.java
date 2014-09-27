@@ -36,7 +36,7 @@ import java.util.Map;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinSimple;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.graphic.HtmlColorSet;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
 import net.sourceforge.plantuml.ugraphic.UFont;
@@ -99,7 +99,7 @@ public class ElementMenuBar extends AbstractElement {
 
 		double x1 = 0;
 		if (zIndex == 0) {
-			ug.apply(new UChangeBackColor(HtmlColorUtils.getColorIfValid("#DDDDDD"))).draw(
+			ug.apply(new UChangeBackColor(HtmlColorSet.getInstance().getColorIfValid("#DDDDDD"))).draw(
 					new URectangle(dimToUse.getWidth(), dimToUse.getHeight()));
 			for (ElementMenuEntry entry : entries) {
 				entry.drawU(ug.apply(new UTranslate(x1, 0)), zIndex, dimToUse);
@@ -112,7 +112,7 @@ public class ElementMenuBar extends AbstractElement {
 
 		if (zIndex == 1) {
 			for (ElementMenuEntry entry : popups.keySet()) {
-				entry.setBackground(HtmlColorUtils.getColorIfValid("#BBBBBB"));
+				entry.setBackground(HtmlColorSet.getInstance().getColorIfValid("#BBBBBB"));
 			}
 
 			final double y1 = preferred.getHeight();

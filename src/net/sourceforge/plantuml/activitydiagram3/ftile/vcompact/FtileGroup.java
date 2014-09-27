@@ -32,7 +32,7 @@ import java.awt.Font;
 import java.awt.geom.Dimension2D;
 import java.util.Set;
 
-import net.sourceforge.plantuml.ISkinSimple;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.activitydiagram3.ftile.AbstractFtile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
@@ -52,18 +52,20 @@ import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.utils.MathUtils;
 
 public class FtileGroup extends AbstractFtile {
 
 	private final double diffYY2 = 20;
 	private final Ftile inner;
 	private final TextBlock name;
+	private final TextBlock headerNote;
 	private final HtmlColor color;
 	private final HtmlColor backColor;
 	private final HtmlColor titleColor;
 
-	public FtileGroup(Ftile inner, Display title, HtmlColor color, HtmlColor backColor, HtmlColor titleColor,
-			ISkinSimple spriteContainer) {
+	public FtileGroup(Ftile inner, Display title, Display displayNote, HtmlColor color, HtmlColor backColor,
+			HtmlColor titleColor, ISkinParam skinParam) {
 		super(inner.shadowing());
 		this.backColor = backColor == null ? HtmlColorUtils.WHITE : backColor;
 		this.inner = new FtileMarged(inner, 10);
@@ -74,7 +76,29 @@ public class FtileGroup extends AbstractFtile {
 		if (title == null) {
 			this.name = TextBlockUtils.empty(0, 0);
 		} else {
-			this.name = TextBlockUtils.create(title, fc, HorizontalAlignment.LEFT, spriteContainer);
+			this.name = TextBlockUtils.create(title, fc, HorizontalAlignment.LEFT, skinParam);
+		}
+		if (displayNote == null) {
+			this.headerNote = TextBlockUtils.empty(0, 0);
+		} else {
+			// final TextBlock tmp = TextBlockUtils.create(displayNote, fc, HorizontalAlignment.LEFT, skinParam);
+
+			// final Rose rose = new Rose();
+			// final HtmlColor fontColor = rose.getFontColor(skinParam, FontParam.NOTE);
+			// final UFont fontNote = skinParam.getFont(FontParam.NOTE, null);
+			//
+			// final HtmlColor noteBackgroundColor = rose.getHtmlColor(skinParam, ColorParam.noteBackground);
+			// final HtmlColor borderColor = rose.getHtmlColor(skinParam, ColorParam.noteBorder);
+			//
+			// final FontConfiguration fc2 = new FontConfiguration(fontNote, fontColor, skinParam.getHyperlinkColor());
+			//
+			// final Sheet sheet = new CreoleParser(fc2, HorizontalAlignment.LEFT, skinParam,
+			// false).createSheet(displayNote);
+			// final TextBlock text = new SheetBlock2(new SheetBlock1(sheet, 0), this, new UStroke(1));
+			// final TextBlock tmp = new Opale(borderColor, noteBackgroundColor, text, skinParam.shadowing(), false);
+
+			// this.headerNote = new Opale(HtmlColorUtils.BLUE, HtmlColorUtils.RED, tmp, inner.shadowing(), false);
+			this.headerNote = new FloatingNote(displayNote, skinParam);
 		}
 	}
 
@@ -90,33 +114,42 @@ public class FtileGroup extends AbstractFtile {
 		return inner.getSwimlaneOut();
 	}
 
-	private double diffYY1(StringBounder stringBounder) {
+	private double diffHeightTitle(StringBounder stringBounder) {
 		final Dimension2D dimTitle = name.calculateDimension(stringBounder);
 		return Math.max(25, dimTitle.getHeight() + 20);
 	}
 
 	private UTranslate getTranslate(StringBounder stringBounder) {
 		final double suppWidth = suppWidth(stringBounder);
-		return new UTranslate(suppWidth / 2, diffYY1(stringBounder));
+		return new UTranslate(suppWidth / 2, diffHeightTitle(stringBounder) + headerNoteHeight(stringBounder));
 	}
 
 	public double suppWidth(StringBounder stringBounder) {
 		final FtileGeometry orig = inner.calculateDimension(stringBounder);
 		final Dimension2D dimTitle = name.calculateDimension(stringBounder);
-		final double suppWidth = Math.max(orig.getWidth(), dimTitle.getWidth() + 20) - orig.getWidth();
+		final Dimension2D dimHeaderNote = headerNote.calculateDimension(stringBounder);
+		final double suppWidth = MathUtils
+				.max(orig.getWidth(), dimTitle.getWidth() + 20, dimHeaderNote.getWidth() + 20) - orig.getWidth();
 		return suppWidth;
 	}
 
 	public FtileGeometry calculateDimension(StringBounder stringBounder) {
 		final FtileGeometry orig = inner.calculateDimension(stringBounder);
 		final double suppWidth = suppWidth(stringBounder);
+		final double width = orig.getWidth() + suppWidth;
+		final double height = orig.getHeight() + diffHeightTitle(stringBounder) + diffYY2
+				+ headerNoteHeight(stringBounder);
+		final double titleAndHeaderNoteHeight = diffHeightTitle(stringBounder) + headerNoteHeight(stringBounder);
 		if (orig.hasPointOut()) {
-			return new FtileGeometry(orig.getWidth() + suppWidth, orig.getHeight() + diffYY1(stringBounder) + diffYY2,
-					orig.getLeft() + suppWidth / 2, orig.getInY() + diffYY1(stringBounder), orig.getOutY()
-							+ diffYY1(stringBounder));
+			return new FtileGeometry(width, height, orig.getLeft() + suppWidth / 2, orig.getInY()
+					+ titleAndHeaderNoteHeight, orig.getOutY() + titleAndHeaderNoteHeight);
 		}
-		return new FtileGeometry(orig.getWidth() + suppWidth, orig.getHeight() + diffYY1(stringBounder) + diffYY2,
-				orig.getLeft() + suppWidth / 2, orig.getInY() + diffYY1(stringBounder));
+		return new FtileGeometry(width, height, orig.getLeft() + suppWidth / 2, orig.getInY()
+				+ titleAndHeaderNoteHeight);
+	}
+
+	private double headerNoteHeight(StringBounder stringBounder) {
+		return headerNote.calculateDimension(stringBounder).getHeight();
 	}
 
 	public void drawU(UGraphic ug) {
@@ -127,6 +160,10 @@ public class FtileGroup extends AbstractFtile {
 				.withStroke(new UStroke(2));
 		USymbol.FRAME.asBig(name, TextBlockUtils.empty(0, 0), dimTotal.getWidth(), dimTotal.getHeight(), symbolContext)
 				.drawU(ug);
+
+		final Dimension2D dimHeaderNote = headerNote.calculateDimension(stringBounder);
+		headerNote.drawU(ug.apply(new UTranslate(dimTotal.getWidth() - dimHeaderNote.getWidth() - 10,
+				diffHeightTitle(ug.getStringBounder()) - 10)));
 
 		ug.apply(getTranslate(stringBounder)).draw(inner);
 

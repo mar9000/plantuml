@@ -73,6 +73,10 @@ public class MinMax {
 		return new MinMax(Math.min(x, minX), Math.min(y, minY), Math.max(x, maxX), Math.max(y, maxY));
 	}
 
+	public MinMax addMinMax(MinMax other) {
+		return new MinMax(Math.min(other.minX, minX), Math.min(other.minY, minY), Math.max(other.maxX, maxX), Math.max(other.maxY, maxY));
+	}
+
 	public static MinMax fromMax(double maxX, double maxY) {
 		return MinMax.getEmpty(true).addPoint(maxX, maxY);
 	}

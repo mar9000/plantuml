@@ -49,7 +49,7 @@ public class ProcessRunnerOld2 {
 	private String error;
 	private String out;
 
-	private volatile ProcessState state = ProcessState.INIT;
+	private volatile ProcessState state = ProcessState.INIT();
 	private final Lock changeState = new ReentrantLock();
 	private static final Lock oneSingleProcess = new ReentrantLock();
 	private static volatile MainThread runningThread;
@@ -63,10 +63,10 @@ public class ProcessRunnerOld2 {
 	}
 
 	public ProcessState run(byte in[], OutputStream redirection, File dir) {
-		if (this.state != ProcessState.INIT) {
+		if (this.state.differs(ProcessState.INIT())) {
 			throw new IllegalStateException();
 		}
-		this.state = ProcessState.RUNNING;
+		this.state = ProcessState.RUNNING();
 		final MainThread mainThread = new MainThread(cmd, dir, redirection, in);
 		try {
 			if (LOCK_WAITING_TIMEOUT > 0) {
@@ -77,7 +77,7 @@ public class ProcessRunnerOld2 {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		if (state == ProcessState.TERMINATED_OK) {
+		if (state.equals(ProcessState.TERMINATED_OK())) {
 			assert mainThread != null;
 			this.error = mainThread.getError();
 			this.out = mainThread.getOut();
@@ -113,8 +113,8 @@ public class ProcessRunnerOld2 {
 		} finally {
 			changeState.lock();
 			try {
-				if (state == ProcessState.RUNNING) {
-					state = ProcessState.TIMEOUT;
+				if (state.equals(ProcessState.RUNNING())) {
+					state = ProcessState.TIMEOUT();
 					mainThread.cancel();
 				}
 			} finally {
@@ -152,7 +152,7 @@ public class ProcessRunnerOld2 {
 		public void run() {
 			try {
 				runInternal();
-				if (state == ProcessState.RUNNING) {
+				if (state.equals(ProcessState.RUNNING())) {
 					final int result = joinInternal();
 				}
 			} catch (InterruptedException e) {
@@ -160,8 +160,8 @@ public class ProcessRunnerOld2 {
 			} finally {
 				changeState.lock();
 				try {
-					if (state == ProcessState.RUNNING) {
-						state = ProcessState.TERMINATED_OK;
+					if (state.equals(ProcessState.RUNNING())) {
+						state = ProcessState.TERMINATED_OK();
 					}
 				} finally {
 					changeState.unlock();
@@ -179,7 +179,7 @@ public class ProcessRunnerOld2 {
 		private void cancel() {
 			// The changeState lock is ok
 			assert changeState.tryLock();
-			assert state == ProcessState.TIMEOUT;
+			assert state.equals(ProcessState.TIMEOUT());
 			if (process != null) {
 				errorStream.cancel();
 				outStream.cancel();
@@ -199,7 +199,7 @@ public class ProcessRunnerOld2 {
 				Performance.incDotInterruption1();
 				changeState.lock();
 				try {
-					state = ProcessState.IO_EXCEPTION1;
+					state = ProcessState.IO_EXCEPTION1(e);
 				} finally {
 					changeState.unlock();
 				}
@@ -222,7 +222,7 @@ public class ProcessRunnerOld2 {
 					Performance.incDotInterruption2();
 					changeState.lock();
 					try {
-						state = ProcessState.IO_EXCEPTION2;
+						state = ProcessState.IO_EXCEPTION2(e);
 					} finally {
 						changeState.unlock();
 					}
@@ -256,7 +256,7 @@ public class ProcessRunnerOld2 {
 		}
 
 		public void cancel() {
-			assert state == ProcessState.TIMEOUT;
+			assert state.equals(ProcessState.TIMEOUT());
 			this.interrupt();
 			sb = null;
 			streamToRead = null;
@@ -269,7 +269,7 @@ public class ProcessRunnerOld2 {
 			int read = 0;
 			try {
 				while ((read = streamToRead.read()) != -1) {
-					if (state == ProcessState.TIMEOUT) {
+					if (state.equals(ProcessState.TIMEOUT())) {
 						return;
 					}
 					if (redirection == null) {

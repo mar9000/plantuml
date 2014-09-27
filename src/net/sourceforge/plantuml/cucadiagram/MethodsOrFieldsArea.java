@@ -52,6 +52,7 @@ import net.sourceforge.plantuml.ugraphic.PlacementStrategyY1Y2Left;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULayoutGroup;
+import net.sourceforge.plantuml.utils.CharHidder;
 
 public class MethodsOrFieldsArea implements TextBlockWidth, TextBlock {
 
@@ -71,7 +72,7 @@ public class MethodsOrFieldsArea implements TextBlockWidth, TextBlock {
 			HorizontalAlignment align) {
 		this.align = align;
 		this.skinParam = skinParam;
-		this.font = skinParam.getFont(fontParam, null);
+		this.font = skinParam.getFont(fontParam, null, false);
 		this.color = rose.getFontColor(skinParam, fontParam);
 		this.hyperlinkColor = skinParam.getHyperlinkColor();
 		this.members.addAll(members);
@@ -110,7 +111,7 @@ public class MethodsOrFieldsArea implements TextBlockWidth, TextBlock {
 		final boolean withVisibilityChar = skinParam.classAttributeIconSize() == 0;
 		String s = m.getDisplay(withVisibilityChar);
 		if (withVisibilityChar && s.startsWith("#")) {
-			s = "\\" + s;
+			s = CharHidder.addTileAtBegin(s);
 		}
 		FontConfiguration config = new FontConfiguration(font, color, hyperlinkColor);
 		if (m.isAbstract()) {

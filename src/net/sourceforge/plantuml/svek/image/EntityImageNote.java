@@ -96,7 +96,7 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 		}
 		borderColor = rose.getHtmlColor(skinParam, ColorParam.noteBorder);
 		final HtmlColor fontColor = rose.getFontColor(skinParam, FontParam.NOTE);
-		final UFont fontNote = skinParam.getFont(FontParam.NOTE, null);
+		final UFont fontNote = skinParam.getFont(FontParam.NOTE, null, false);
 
 		if (strings.size() == 1 && strings.get(0).length() == 0) {
 			textBlock = new TextBlockEmpty();

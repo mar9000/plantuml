@@ -28,7 +28,6 @@
  */
 package net.sourceforge.plantuml.sequencediagram;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
@@ -185,7 +184,7 @@ public class SequenceDiagram extends UmlDiagram {
 		return Collections.unmodifiableList(events);
 	}
 
-	private FileMaker getSequenceDiagramPngMaker(FileFormatOption fileFormatOption, List<BufferedImage> flashcodes) {
+	private FileMaker getSequenceDiagramPngMaker(FileFormatOption fileFormatOption) {
 
 		final FileFormat fileFormat = fileFormatOption.getFileFormat();
 
@@ -194,16 +193,15 @@ public class SequenceDiagram extends UmlDiagram {
 		}
 		
 		if (OptionFlags.TEOZ) {
-			return new SequenceDiagramFileMakerTeoz(this, skin, fileFormatOption, flashcodes);
+			return new SequenceDiagramFileMakerTeoz(this, skin, fileFormatOption);
 		}
 
-		return new SequenceDiagramFileMakerPuma2(this, skin, fileFormatOption, flashcodes);
+		return new SequenceDiagramFileMakerPuma2(this, skin, fileFormatOption);
 	}
 
 	@Override
-	protected ImageData exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormat,
-			List<BufferedImage> flashcodes) throws IOException {
-		final FileMaker sequenceDiagramPngMaker = getSequenceDiagramPngMaker(fileFormat, flashcodes);
+	protected ImageData exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormat) throws IOException {
+		final FileMaker sequenceDiagramPngMaker = getSequenceDiagramPngMaker(fileFormat);
 		return sequenceDiagramPngMaker.createOne(os, index, fileFormat.isWithMetadata());
 	}
 
@@ -357,7 +355,7 @@ public class SequenceDiagram extends UmlDiagram {
 
 	@Override
 	public int getNbImages() {
-		return getSequenceDiagramPngMaker(new FileFormatOption(FileFormat.PNG), null).getNbPages();
+		return getSequenceDiagramPngMaker(new FileFormatOption(FileFormat.PNG)).getNbPages();
 	}
 
 	public void removeHiddenParticipants() {

@@ -38,7 +38,7 @@ import net.sourceforge.plantuml.Hideable;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
-import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.Pragma;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.cucadiagram.Display;
@@ -75,6 +75,7 @@ import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.utils.StringUtils;
 
 public class Line implements Moveable, Hideable {
 
@@ -112,6 +113,8 @@ public class Line implements Moveable, Hideable {
 	private boolean opale;
 	private Cluster projectionCluster;
 	private final GraphvizVersion graphvizVersion;
+	
+	private final Pragma pragma;
 
 	// private GraphvizVersion getGraphvizVersion() {
 	// if (pragma.isDefine("graphviz")==false) {
@@ -195,11 +198,12 @@ public class Line implements Moveable, Hideable {
 
 	public Line(String startUid, String endUid, Link link, ColorSequence colorSequence, String ltail, String lhead,
 			ISkinParam skinParam, StringBounder stringBounder, FontConfiguration labelFont, Bibliotekon bibliotekon,
-			GraphvizVersion graphvizVersion) {
+			GraphvizVersion graphvizVersion, Pragma pragma) {
 		if (startUid == null || endUid == null || link == null) {
 			throw new IllegalArgumentException();
 		}
 		this.graphvizVersion = graphvizVersion;
+		this.pragma = pragma;
 		this.bibliotekon = bibliotekon;
 		this.stringBounder = stringBounder;
 		this.link = link;
@@ -316,7 +320,7 @@ public class Line implements Moveable, Hideable {
 		// if (graphvizVersion == GraphvizVersion.V2_34_0 && length == 1) {
 		// length = 2;
 		// }
-		if (OptionFlags.HORIZONTAL_LINE_BETWEEN_DIFFERENT_PACKAGE_ALLOWED || link.isInvis() || length != 1) {
+		if (pragma.horizontalLineBetweenDifferentPackageAllowed() || link.isInvis() || length != 1) {
 			sb.append("minlen=" + (length - 1));
 			sb.append(",");
 		}
@@ -379,7 +383,7 @@ public class Line implements Moveable, Hideable {
 		// if (graphvizVersion == GraphvizVersion.V2_34_0) {
 		// return null;
 		// }
-		if (OptionFlags.HORIZONTAL_LINE_BETWEEN_DIFFERENT_PACKAGE_ALLOWED == false && link.getLength() == 1) {
+		if (pragma.horizontalLineBetweenDifferentPackageAllowed() == false && link.getLength() == 1) {
 			return "{rank=same; " + getStartUid() + "; " + getEndUid() + "}";
 		}
 		return null;

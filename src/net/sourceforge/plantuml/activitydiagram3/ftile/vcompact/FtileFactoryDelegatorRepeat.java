@@ -51,7 +51,7 @@ public class FtileFactoryDelegatorRepeat extends FtileFactoryDelegator {
 	public Ftile repeat(Swimlane swimlane, Ftile repeat, Display test, Display yes, Display out, HtmlColor color) {
 		final ConditionStyle conditionStyle = getSkinParam().getConditionStyle();
 		final UFont font = getSkinParam().getFont(
-				conditionStyle == ConditionStyle.INSIDE ? FontParam.ACTIVITY_DIAMOND : FontParam.ACTIVITY_ARROW, null);
+				conditionStyle == ConditionStyle.INSIDE ? FontParam.ACTIVITY_DIAMOND : FontParam.ACTIVITY_ARROW, null, false);
 
 		final HtmlColor borderColor = getRose().getHtmlColor(getSkinParam(), ColorParam.activityBorder);
 		final HtmlColor backColor = color == null ? getRose().getHtmlColor(getSkinParam(),

@@ -49,7 +49,7 @@ public class ProcessRunner {
 	private String error;
 	private String out;
 
-	private volatile ProcessState state = ProcessState.INIT;
+	private volatile ProcessState state = ProcessState.INIT();
 	private final Lock changeState = new ReentrantLock();
 
 	public ProcessRunner(String[] cmd) {
@@ -61,28 +61,25 @@ public class ProcessRunner {
 	}
 
 	public ProcessState run(byte in[], OutputStream redirection, File dir) {
-		if (this.state != ProcessState.INIT) {
+		if (this.state.differs(ProcessState.INIT())) {
 			throw new IllegalStateException();
 		}
-		if (OptionFlags.CRASH_SPRITE) {
-			throw new UnsupportedOperationException();
-		}
-		this.state = ProcessState.RUNNING;
+		this.state = ProcessState.RUNNING();
 		final MainThread mainThread = new MainThread(cmd, dir, redirection, in);
 		try {
 			final boolean done = new TimeoutExecutor(TIMEOUT).executeNow(mainThread);
 		} finally {
 			changeState.lock();
 			try {
-				if (state == ProcessState.RUNNING) {
-					state = ProcessState.TIMEOUT;
+				if (state.equals(ProcessState.RUNNING())) {
+					state = ProcessState.TIMEOUT();
 					// mainThread.cancel();
 				}
 			} finally {
 				changeState.unlock();
 			}
 		}
-		if (state == ProcessState.TERMINATED_OK) {
+		if (state.equals(ProcessState.TERMINATED_OK())) {
 			assert mainThread != null;
 			this.error = mainThread.getError();
 			this.out = mainThread.getOut();
@@ -118,14 +115,14 @@ public class ProcessRunner {
 		public void runJob() throws InterruptedException {
 			try {
 				startThreads();
-				if (state == ProcessState.RUNNING) {
+				if (state.equals(ProcessState.RUNNING())) {
 					final int result = joinInternal();
 				}
 			} finally {
 				changeState.lock();
 				try {
-					if (state == ProcessState.RUNNING) {
-						state = ProcessState.TERMINATED_OK;
+					if (state.equals(ProcessState.RUNNING())) {
+						state = ProcessState.TERMINATED_OK();
 					}
 				} finally {
 					changeState.unlock();
@@ -163,7 +160,7 @@ public class ProcessRunner {
 				Performance.incDotInterruption1();
 				changeState.lock();
 				try {
-					state = ProcessState.IO_EXCEPTION1;
+					state = ProcessState.IO_EXCEPTION1(e);
 				} finally {
 					changeState.unlock();
 				}
@@ -186,7 +183,7 @@ public class ProcessRunner {
 					Performance.incDotInterruption2();
 					changeState.lock();
 					try {
-						state = ProcessState.IO_EXCEPTION2;
+						state = ProcessState.IO_EXCEPTION2(e);
 					} finally {
 						changeState.unlock();
 					}
@@ -220,7 +217,7 @@ public class ProcessRunner {
 		}
 
 		public void cancel() {
-			assert state == ProcessState.TIMEOUT;
+			assert state.equals(ProcessState.TIMEOUT());
 			this.interrupt();
 			sb = null;
 			streamToRead = null;
@@ -233,7 +230,7 @@ public class ProcessRunner {
 			int read = 0;
 			try {
 				while ((read = streamToRead.read()) != -1) {
-					if (state == ProcessState.TIMEOUT) {
+					if (state.equals(ProcessState.TIMEOUT())) {
 						return;
 					}
 					if (redirection == null) {

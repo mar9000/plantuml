@@ -44,9 +44,7 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.EntityPosition;
 import net.sourceforge.plantuml.cucadiagram.EntityUtils;
@@ -74,6 +72,8 @@ import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.utils.StringUtils;
+import net.sourceforge.plantuml.utils.UniqueSequence;
 
 public class Cluster implements Moveable {
 
@@ -121,12 +121,17 @@ public class Cluster implements Moveable {
 		this(null, root, colorSequence, skinParam);
 	}
 
+	private ColorParam border;
+
 	private Cluster(Cluster parent, IGroup group, ColorSequence colorSequence, ISkinParam skinParam) {
 		if (group == null) {
 			throw new IllegalStateException();
 		}
 		this.parent = parent;
 		this.group = group;
+		if (group.getUSymbol() != null) {
+			border = group.getUSymbol().getColorParamBorder();
+		}
 		this.color = colorSequence.getValue();
 		this.colorTitle = colorSequence.getValue();
 		this.skinParam = skinParam;
@@ -279,7 +284,18 @@ public class Cluster implements Moveable {
 		this.yTitle = y;
 	}
 
-	public void drawU(UGraphic ug, HtmlColor borderColor, DotData dotData, UStroke stroke) {
+	private static HtmlColor getColor(ColorParam colorParam, ISkinParam skinParam) {
+		return new Rose().getHtmlColor(skinParam, colorParam);
+	}
+
+	public void drawU(UGraphic ug, DotData dotData, UStroke stroke) {
+		HtmlColor borderColor;
+		if (dotData.getUmlDiagramType() == UmlDiagramType.STATE) {
+			borderColor = getColor(ColorParam.stateBorder, dotData.getSkinParam());
+		} else {
+			borderColor = getColor(ColorParam.packageBorder, dotData.getSkinParam());
+		}
+
 		final Url url = group.getUrl99();
 		if (url != null) {
 			ug.startUrl(url);
@@ -307,6 +323,13 @@ public class Cluster implements Moveable {
 			if (style == null) {
 				style = dotData.getSkinParam().getPackageStyle();
 			}
+			if (border != null) {
+				final HtmlColor tmp = dotData.getSkinParam().getHtmlColor(border, null, false);
+				if (tmp != null) {
+					borderColor = tmp;
+				}
+			}
+
 			if (ztitle != null || zstereo != null) {
 				final HtmlColor stateBack = getStateBackColor(getBackColor(), dotData.getSkinParam(),
 						group.getStereotype());

@@ -45,12 +45,12 @@ public class CommandStereotype extends SingleLineCommand<ClassDiagram> {
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(ClassDiagram classDiagram, List<String> arg) {
+	protected CommandExecutionResult executeArg(ClassDiagram diagram, List<String> arg) {
 		final Code code = Code.of(arg.get(0));
 		final String stereotype = arg.get(1);
-		final IEntity entity = classDiagram.getOrCreateLeaf(code, null, null);
-		entity.setStereotype(new Stereotype(stereotype, classDiagram.getSkinParam().getCircledCharacterRadius(),
-				classDiagram.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null)));
+		final IEntity entity = diagram.getOrCreateLeaf(code, null, null);
+		entity.setStereotype(new Stereotype(stereotype, diagram.getSkinParam().getCircledCharacterRadius(), diagram
+				.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null, false), diagram.getSkinParam().getIHtmlColorSet()));
 		return CommandExecutionResult.ok();
 	}
 

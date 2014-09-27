@@ -43,8 +43,10 @@ import java.util.Set;
 
 import net.sourceforge.plantuml.EnsureVisible;
 import net.sourceforge.plantuml.Url;
+import net.sourceforge.plantuml.anim.AffineTransformation;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
+import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.png.PngIO;
 import net.sourceforge.plantuml.posimo.DotPath;
 import net.sourceforge.plantuml.ugraphic.AbstractCommonUGraphic;
@@ -76,6 +78,8 @@ public class UGraphicG2d extends AbstractUGraphic<Graphics2D> implements EnsureV
 	private/* final */List<Url> urls = new ArrayList<Url>();
 	private Set<Url> allUrls = new HashSet<Url>();
 
+	private final boolean hasAffineTransform;
+
 	public final Set<Url> getAllUrlsEncountered() {
 		return Collections.unmodifiableSet(allUrls);
 	}
@@ -96,6 +100,7 @@ public class UGraphicG2d extends AbstractUGraphic<Graphics2D> implements EnsureV
 
 	private UGraphicG2d(UGraphicG2d other) {
 		super(other);
+		this.hasAffineTransform = other.hasAffineTransform;
 		this.dpiFactor = other.dpiFactor;
 		this.bufferedImage = other.bufferedImage;
 		this.urls = other.urls;
@@ -105,25 +110,33 @@ public class UGraphicG2d extends AbstractUGraphic<Graphics2D> implements EnsureV
 	}
 
 	public UGraphicG2d(ColorMapper colorMapper, Graphics2D g2d, double dpiFactor) {
-		this(colorMapper, g2d, dpiFactor, null);
-
+		this(colorMapper, g2d, dpiFactor, null, 0, 0);
 	}
 
-	public UGraphicG2d(ColorMapper colorMapper, Graphics2D g2d, double dpiFactor, AffineTransform affineTransform) {
+	public UGraphicG2d(ColorMapper colorMapper, Graphics2D g2d, double dpiFactor, AffineTransformation affineTransform,
+			double dx, double dy) {
 		super(colorMapper, g2d);
+		this.hasAffineTransform = affineTransform != null;
 		this.dpiFactor = dpiFactor;
 		if (dpiFactor != 1.0) {
 			g2d.scale(dpiFactor, dpiFactor);
 		}
-		if (affineTransform != null) {
-			g2d.transform(affineTransform);
+		if (this.hasAffineTransform) {
+			if (dx != 0 || dy != 0) {
+				getGraphicObject().transform(AffineTransform.getTranslateInstance(dx, dy));
+			}
+			getGraphicObject().transform(affineTransform.getAffineTransform());
 		}
 		register(dpiFactor);
 	}
 
 	private void register(double dpiFactor) {
 		registerDriver(URectangle.class, new DriverRectangleG2d(dpiFactor, this));
-		registerDriver(UText.class, new DriverTextG2d(this));
+		if (this.hasAffineTransform) {
+			registerDriver(UText.class, new DriverTextAsPathG2d(this, TextBlockUtils.getFontRenderContext()));
+		} else {
+			registerDriver(UText.class, new DriverTextG2d(this));
+		}
 		registerDriver(ULine.class, new DriverLineG2d(dpiFactor));
 		registerDriver(UPixel.class, new DriverPixelG2d());
 		registerDriver(UPolygon.class, new DriverPolygonG2d(dpiFactor, this));
@@ -135,6 +148,9 @@ public class UGraphicG2d extends AbstractUGraphic<Graphics2D> implements EnsureV
 	}
 
 	public StringBounder getStringBounder() {
+		if (hasAffineTransform) {
+			return TextBlockUtils.getDummyStringBounder();
+		}
 		return StringBounderUtils.asStringBounder(getGraphicObject());
 	}
 
