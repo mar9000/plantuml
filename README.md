@@ -1,20 +1,16 @@
-Plant UML 9000
-==============
+# Plant UML 9000
 
 My personal version of PlantUML (LGPL version) with fixes and enhancements I need.
 
-How to use
-----------
+## How to use
 
   1. build PlantUML9000 with ant, the default target will create the file ``plantuml9000.jar``.
   1. after this you can create the pdf file of the Sphinx demo. Go to the ``sphinx-demo`` directory and type ``make latexpdf``.
   1. the resulting pdf can be found in ``sphinx-demo/build/latex``.
 
-Additions
----------
+## Additions
 
-Salt9000 integration
-....................
+### Salt9000 integration
 
 This version of PlantUML comes integrated with [Salt9000](https://github/mar9000/salt9000) an ANTLR parser
 for the Salt language that comes with PlantUML. Salt9000 however use pure Swing to render UI so the result is as realistic
