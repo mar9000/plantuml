@@ -29,9 +29,15 @@
 package net.sourceforge.plantuml.core;
 
 public enum DiagramType {
+	SALT9000,   // mar9000: add ANTLR parser for SALT.
 	UML, DITAA, DOT, PROJECT, JCCKIT, SALT, TURING, FLOW, CREOLE, JUNGLE, UNKNOWN;
 
 	static public DiagramType getTypeFromArobaseStart(String s) {
+		// mar9000: add ANTLR parser for SALT9000.
+		if (s.startsWith("@startsalt9000")) {
+			return SALT9000;
+		}
+		// End mar9000.
 //		if (s.startsWith("@startuml2")) {
 //			return UML2;
 //		}

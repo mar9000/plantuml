@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.mar9000.plantuml.PSystemSalt9000Factory;
+
 import net.sourceforge.plantuml.activitydiagram.ActivityDiagramFactory;
 import net.sourceforge.plantuml.activitydiagram3.ActivityDiagramFactory3;
 import net.sourceforge.plantuml.api.PSystemFactory;
@@ -135,6 +137,7 @@ public class PSystemBuilder {
 		factories.add(new PSystemProjectFactory2());
 		factories.add(new FlowDiagramFactory());
 		factories.add(new PSystemTreeFactory(DiagramType.JUNGLE));
+		factories.add(new PSystemSalt9000Factory(DiagramType.SALT9000));   // mar9000: ANTLR parser for SALT.
 		return factories;
 	}
 
