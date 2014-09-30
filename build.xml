@@ -46,27 +46,16 @@
 	</target>
 
 	<target name="dist" depends="compile">
-          <!-- mar9000: add Salt9000 to the build.   -->
-	  <copy todir="build/lib" flatten="true">
-            <path refid="compile.classpath"/>
-            <path location="lib/jgoodies-common-1.8.0.jar"/>
-            <path location="lib/jgoodies-looks-2.6.0.jar"/>
-          </copy>
-	  <manifestclasspath property="manifest.complete-classpath" jarfile="plantuml9000.jar">
-            <classpath>
-              <pathelement location="."/>
-              <pathelement location="lib/antlr-runtime-4.4.jar"/>
-              <pathelement location="lib/jgoodies-common-1.8.0.jar"/>
-              <pathelement location="lib/jgoodies-looks-2.6.0.jar"/>
-            </classpath>
-          </manifestclasspath>
+          <!-- mar9000: add required libraries to the build.   -->
+	  <unzip src="lib/antlr-runtime-4.4.jar" dest="build" />
+	  <unzip src="lib/jgoodies-common-1.8.0.jar" dest="build" />
+	  <unzip src="lib/jgoodies-looks-2.6.0.jar" dest="build" />
           <!-- End mar9000.   -->
 		<delete dir="dist" />
 		<mkdir dir="dist" />
 		<jar jarfile="plantuml9000.jar" basedir="build">
 			<manifest>
 				<attribute name="Main-Class" value="net.sourceforge.plantuml.Run" />
-				<attribute name="Class-Path" value="${manifest.complete-classpath}"/>   <!-- mar9000: add Salt9000 to the build.   -->
 			</manifest>
 		</jar>
 		<delete dir="build" />
