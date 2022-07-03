@@ -12,7 +12,7 @@ My personal version of PlantUML (LGPL version) with fixes and enhancements I nee
 
 ### Salt9000 integration
 
-This version of PlantUML comes integrated with [Salt9000](https://github/mar9000/salt9000) an ANTLR parser
+This version of PlantUML comes integrated with [Salt9000](https://github.com/mar9000/salt9000) an ANTLR parser
 for the Salt language that comes with PlantUML. Salt9000 however use pure Swing to render UI so the result is as realistic
 as the real application.
 
